@@ -1,0 +1,4485 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>QuantumSales | Enterprise Analytics Dashboard</title>
+  
+  <!-- FOUC Prevention Script -->
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("theme");
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = savedTheme || (systemPrefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Embedded CSS Stylesheet -->
+  <style>
+    /* CSS DESIGN SYSTEM & VARIABLES */
+    :root {
+      --font-primary: 'Poppins', sans-serif;
+      --transition-speed: 0.35s;
+      
+      /* Dark Theme Variables (Default) */
+      --bg-app: #0b0f19;
+      --bg-sidebar: #111827;
+      --bg-sidebar-hover: #1f2937;
+      --bg-card: rgba(20, 26, 46, 0.65);
+      --bg-card-hover: rgba(28, 37, 65, 0.85);
+      --bg-input: #1f2937;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(99, 102, 241, 0.4);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --primary: #6366f1; /* Indigo */
+      --primary-rgb: 99, 102, 241;
+      --primary-glow: rgba(99, 102, 241, 0.15);
+      --success: #10b981; /* Emerald */
+      --success-rgb: 16, 185, 129;
+      --warning: #f59e0b; /* Amber */
+      --danger: #ef4444; /* Rose */
+      --danger-rgb: 239, 68, 68;
+      --info: #3b82f6; /* Blue */
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+      --scrollbar-thumb: #374151;
+      --scrollbar-track: #111827;
+    }
+
+    [data-theme="light"] {
+      /* Light Theme Variables */
+      --bg-app: #f3f4f6;
+      --bg-sidebar: #ffffff;
+      --bg-sidebar-hover: #f3f4f6;
+      --bg-card: rgba(255, 255, 255, 0.75);
+      --bg-card-hover: rgba(255, 255, 255, 0.95);
+      --bg-input: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-hover: rgba(79, 70, 229, 0.4);
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --primary: #4f46e5;
+      --primary-rgb: 79, 70, 229;
+      --primary-glow: rgba(79, 70, 229, 0.08);
+      --success: #059669;
+      --success-rgb: 5, 150, 105;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --danger-rgb: 220, 38, 38;
+      --info: #2563eb;
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+      --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+      --scrollbar-thumb: #d1d5db;
+      --scrollbar-track: #f9fafb;
+    }
+
+    /* GLOBAL RESET & BASE STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* CUSTOM SCROLLBARS */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    @supports not (scrollbar-color: auto) {
+      /* Webkit Fallback */
+    }
+
+    /* GLASSMORPHISM CARDS */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+      padding: 1.5rem;
+      transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow var(--transition-speed) ease,
+                  border-color var(--transition-speed) ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: opacity var(--transition-speed) ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--glass-shadow), 0 12px 24px -10px rgba(var(--primary-rgb), 0.3);
+      border-color: var(--border-hover);
+    }
+
+    .glass-card:hover::before {
+      opacity: 1;
+    }
+
+    /* APP LAYOUT WRAPPER */
+    #wrapper {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* SIDEBAR SYSTEM */
+    #sidebar-wrapper {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .sidebar-heading {
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 1.5rem 0.75rem;
+      overflow-y: auto;
+    }
+
+    .sidebar-menu-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .list-group-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 0.25rem;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: none;
+      background: transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .list-group-item i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+      transition: color 0.2s ease;
+    }
+
+    .list-group-item:hover {
+      background-color: var(--bg-sidebar-hover);
+      color: var(--text-primary);
+    }
+
+    .list-group-item.active {
+      background: linear-gradient(90deg, var(--primary-glow), transparent);
+      color: var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 10px 10px 0;
+      padding-left: calc(1.25rem - 4px);
+    }
+
+    .list-group-item.active i {
+      color: var(--primary);
+    }
+
+    .sidebar-footer {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* MAIN CONTENT AREA */
+    #page-content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: var(--bg-app);
+    }
+
+    /* HEADER / NAVBAR */
+    .navbar {
+      background-color: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    #menu-toggle {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #menu-toggle:hover {
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+      background-color: var(--bg-sidebar-hover);
+    }
+
+    .search-bar-container {
+      position: relative;
+      width: 320px;
+    }
+
+    .search-bar-container input {
+      width: 100%;
+      background-color: var(--bg-app);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: all 0.25s ease;
+    }
+
+    .search-bar-container input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .search-bar-container i {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .nav-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      position: relative;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .nav-icon-btn:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-sidebar-hover);
+    }
+
+    .nav-icon-btn .badge-pill {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background-color: var(--danger);
+      border-radius: 50%;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 10px;
+      transition: background-color 0.2s ease;
+    }
+
+    .user-profile:hover {
+      background-color: var(--bg-sidebar-hover);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #a78bfa);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 2px solid var(--border-color);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* SCROLLABLE CONTENT AREA */
+    .content-container {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    /* INTERACTIVE FILTERS BAR */
+    .filters-bar {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .filter-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      border-radius: 10px;
+      padding: 0.5rem 2rem 0.5rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .btn-action {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-glow);
+      color: var(--primary);
+    }
+
+    /* KPI METRICS CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 140px;
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .kpi-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-icon-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(180deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .kpi-trend-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .kpi-trend-pill.up {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .kpi-trend-pill.down {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .kpi-sparkline {
+      width: 80px;
+      height: 30px;
+    }
+
+    .kpi-sparkline path {
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* THEME ICON GRADIENTS */
+    .kpi-revenue .kpi-icon-container { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+    .kpi-orders .kpi-icon-container { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+    .kpi-customers .kpi-icon-container { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .kpi-profit .kpi-icon-container { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+    
+    /* ANALYTICS SECTIONS & TAB VIEWS */
+    .dashboard-section {
+      display: none; /* Controlled by JS Router */
+      animation: fadeIn var(--transition-speed) ease-in-out;
+    }
+
+    .dashboard-section.active {
+      display: block;
+    }
+
+    /* CHARTS CONTAINER */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-container-large {
+      grid-column: span 8;
+    }
+
+    .chart-container-small {
+      grid-column: span 4;
+    }
+
+    .chart-container-medium {
+      grid-column: span 6;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+
+    /* AI RECOMMENDATIONS & INSIGHTS PANEL */
+    .ai-insights-panel {
+      margin-bottom: 2rem;
+    }
+
+    .ai-insight-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      background-color: rgba(var(--primary-rgb), 0.03);
+      border-left: 4px solid var(--primary);
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .ai-insight-item:hover {
+      background-color: rgba(var(--primary-rgb), 0.07);
+      transform: translateX(4px);
+    }
+
+    .ai-insight-icon {
+      font-size: 1.25rem;
+      color: var(--primary);
+      margin-top: 0.1rem;
+    }
+
+    .ai-insight-content h6 {
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .ai-insight-content p {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .ai-health-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    /* TABLES STYLING */
+    .table-container {
+      margin-bottom: 2rem;
+    }
+
+    .custom-table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .custom-table th {
+      background-color: var(--bg-sidebar);
+      padding: 0.875rem 1.25rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .custom-table th:hover {
+      background-color: var(--bg-sidebar-hover);
+    }
+
+    .custom-table th.sort-asc::after {
+      content: ' \f0de';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.75rem;
+    }
+
+    .custom-table th.sort-desc::after {
+      content: ' \f0dd';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.75rem;
+    }
+
+    .custom-table td {
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .custom-table tbody tr {
+      background-color: var(--bg-card);
+      transition: background-color 0.15s ease;
+    }
+
+    .custom-table tbody tr:hover {
+      background-color: var(--bg-sidebar-hover);
+    }
+
+    .custom-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* STATUS PILLS */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      gap: 0.25rem;
+    }
+
+    .status-badge.profit-high { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .status-badge.profit-mid { background-color: rgba(59, 130, 246, 0.1); color: var(--info); }
+    .status-badge.profit-low { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+    /* PAGINATION */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .pagination-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .pagination-btn {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+      background-color: var(--primary-glow);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-sidebar);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+
+    /* SKELETON LOADERS */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-sidebar-hover) 50%, var(--bg-input) 75%);
+      background-size: 200% 100%;
+      animation: loading-wave 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    .skeleton-text {
+      height: 12px;
+      margin-bottom: 6px;
+      width: 100%;
+    }
+
+    .skeleton-title {
+      height: 20px;
+      margin-bottom: 12px;
+      width: 60%;
+    }
+
+    .skeleton-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .skeleton-card {
+      height: 140px;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(var(--bg-app), 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .spinner {
+      border: 3px solid rgba(var(--primary-rgb), 0.1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border-left-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    /* DYNAMIC KEYFRAME ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes loading-wave {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* COLLAPSIBLE SIDEBAR */
+    #sidebar-wrapper.collapsed {
+      margin-left: -280px;
+    }
+
+    /* TOAST ALERTS */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+    }
+
+    .custom-toast {
+      background-color: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 280px;
+      max-width: 380px;
+      animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(100%) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* RESPONSIVE DESIGN - MEDIA QUERIES */
+    @media (max-width: 991.98px) {
+      #sidebar-wrapper {
+        position: absolute;
+        height: 100vh;
+        margin-left: -280px;
+      }
+      #sidebar-wrapper.active {
+        margin-left: 0;
+      }
+      #page-content-wrapper {
+        width: 100vw;
+      }
+      .charts-grid {
+        display: flex;
+        flex-direction: column;
+      }
+      .chart-container-large, .chart-container-medium, .chart-container-small {
+        width: 100%;
+      }
+      .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-group {
+        justify-content: space-between;
+      }
+      .search-bar-container {
+        width: 200px;
+      }
+    }
+
+    /* PRINT LAYOUT OVERRIDES (PDF Export) */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      #sidebar-wrapper, .navbar, .filters-bar, footer, .toast-container, .pagination-bar {
+        display: none !important;
+      }
+      #page-content-wrapper {
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .content-container {
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+      .glass-card {
+        background: transparent !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        margin-bottom: 1.5rem !important;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+      }
+      .charts-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+      }
+      .chart-container-large, .chart-container-medium, .chart-container-small {
+        grid-column: span 1 !important;
+        break-inside: avoid;
+      }
+      .dashboard-section {
+        display: block !important; /* Force print all sections for a full report! */
+      }
+    }
+
+    /* FOUC prevention logic for authenticated sessions */
+    html.login-bypass #login-overlay {
+      display: none !important;
+    }
+
+    /* ADMIN LOGIN OVERLAY */
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #111827 0%, #0b0f19 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.5s ease;
+    }
+
+    #login-overlay.authenticated {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .login-box {
+      width: 420px;
+      padding: 2.5rem;
+      text-align: center;
+      animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .login-header {
+      margin-bottom: 2rem;
+    }
+
+    .login-logo-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--primary), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 0 15px var(--primary-glow));
+    }
+
+    .login-header h3 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .input-group-custom {
+      position: relative;
+      width: 100%;
+    }
+
+    .input-group-custom input {
+      width: 100%;
+      background-color: var(--bg-app);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+    }
+
+    .input-group-custom input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .input-group-custom .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: color 0.25s ease;
+    }
+
+    .input-group-custom input:focus + .input-icon {
+      color: var(--primary);
+    }
+
+    .btn-login {
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+      filter: brightness(1.1);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .login-credentials-hint {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background-color: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* SHAKE ANIMATION FOR FAILED LOGIN */
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: 480px;
+      max-width: 90vw;
+      padding: 2rem;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--danger);
+    }
+
+    .bg-app-subtle {
+      background-color: rgba(20, 26, 46, 0.3);
+    }
+  </style>
+  {{ headContent() }}
+</head>
+<body>
+
+  <!-- Admin Login Overlay -->
+  <div id="login-overlay">
+    <div class="login-box glass-card">
+      <div class="login-header">
+        <i class="fa-solid fa-cube text-primary login-logo-icon"></i>
+        <h3>QuantumSales</h3>
+        <p class="text-secondary">Enterprise Analytics Login</p>
+      </div>
+      <form id="login-form">
+        <div class="mb-3">
+          <label for="login-username" class="form-label text-secondary small fw-600">User ID</label>
+          <div class="input-group-custom">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" id="login-username" placeholder="Enter User ID" required>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="login-password" class="form-label text-secondary small fw-600">Password</label>
+          <div class="input-group-custom">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="login-password" placeholder="Enter Password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-login w-100">
+          <span>Authenticate</span>
+          <i class="fa-solid fa-right-to-bracket ms-2"></i>
+        </button>
+      </form>
+      <div class="login-credentials-hint">
+        <i class="fa-solid fa-circle-info text-primary"></i>
+        <span>Credentials: <strong>admin</strong> / <strong>quantum2026</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Layout Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar-wrapper">
+      <div class="sidebar-heading">
+        <div class="sidebar-logo">
+          <i class="fa-solid fa-cube text-primary"></i>
+          <span>QuantumSales</span>
+        </div>
+      </div>
+      
+      <div class="sidebar-menu">
+        <div class="sidebar-menu-title">Main Menu</div>
+        <button class="list-group-item active" data-view="overview">
+          <i class="fa-solid fa-gauge-high"></i>Dashboard
+        </button>
+        <button class="list-group-item" data-view="sales">
+          <i class="fa-solid fa-chart-line"></i>Sales Analytics
+        </button>
+        <button class="list-group-item" data-view="revenue">
+          <i class="fa-solid fa-wallet"></i>Revenue Analysis
+        </button>
+        
+        <div class="sidebar-menu-title mt-3">Core Reports</div>
+        <button class="list-group-item" data-view="products">
+          <i class="fa-solid fa-box-open"></i>Product Performance
+        </button>
+        <button class="list-group-item" data-view="customers">
+          <i class="fa-solid fa-users"></i>Customer Insights
+        </button>
+        <button class="list-group-item" data-view="regional">
+          <i class="fa-solid fa-earth-americas"></i>Regional Sales
+        </button>
+
+        <div class="sidebar-menu-title mt-3">Advanced AI</div>
+        <button class="list-group-item" data-view="forecasting">
+          <i class="fa-solid fa-chart-simple"></i>Sales Forecasting
+        </button>
+        <button class="list-group-item" data-view="ai-actions">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>AI Recommendations
+        </button>
+
+        <div class="sidebar-menu-title mt-3">Configuration</div>
+        <button class="list-group-item" data-view="audit-report">
+          <i class="fa-solid fa-clipboard-list"></i>Reports & Data Audit
+        </button>
+        <button class="list-group-item" data-view="settings">
+          <i class="fa-solid fa-gears"></i>Settings
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa-solid fa-circle-check text-success"></i>
+          <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-secondary);">Audit Status: Clean</span>
+        </div>
+        <span class="badge bg-secondary" style="font-size: 0.65rem;">v2.4</span>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div id="page-content-wrapper">
+
+      <!-- Header Navigation Bar -->
+      <header class="navbar">
+        <div class="navbar-left">
+          <button id="menu-toggle" aria-label="Toggle Navigation Sidebar">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+          
+          <h4 class="mb-0 d-none d-sm-block text-primary" style="font-weight: 700;">Enterprise Analytics</h4>
+          
+          <!-- Search Bar -->
+          <div class="search-bar-container ms-3">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="global-search" placeholder="Search orders, clients, items...">
+          </div>
+        </div>
+
+        <div class="navbar-right">
+          <!-- Live Clock Widget -->
+          <div class="d-none d-md-flex align-items-center gap-2 text-muted me-2" style="font-size: 0.75rem; font-weight: 500;">
+            <i class="fa-regular fa-clock"></i>
+            <span id="live-clock">Loading Time...</span>
+          </div>
+
+          <!-- Notification Center -->
+          <div class="dropdown">
+            <button class="nav-icon-btn" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications Panel">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-pill"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end glass-card p-2" aria-labelledby="notifDropdown" style="width: 320px; border-radius: 12px; color: var(--text-primary);">
+              <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2 px-2">
+                <h6 class="mb-0 fw-600">Notifications</h6>
+                <button class="btn btn-sm btn-link text-primary p-0" onclick="clearNotifications()" style="font-size: 0.75rem;">Clear All</button>
+              </div>
+              <div id="notification-list" style="max-height: 250px; overflow-y: auto;">
+                <!-- Filled dynamically by JS -->
+              </div>
+            </ul>
+          </div>
+
+          <!-- Theme Toggle Button -->
+          <button class="nav-icon-btn" id="theme-toggle" aria-label="Switch Dark/Light Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown">
+            <div class="user-profile" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar">AM</div>
+              <div class="user-info d-none d-md-flex">
+                <span class="user-name">Andrew Miller</span>
+                <span class="user-role">Sales Director</span>
+              </div>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end glass-card p-2" aria-labelledby="userProfileDropdown" style="border-radius: 12px;">
+              <li><a class="dropdown-item py-2 px-3 rounded text-secondary" style="font-size: 0.85rem;" href="#" onclick="switchTab('settings')"><i class="fa-solid fa-user-gear me-2"></i>My Profile</a></li>
+              <li><a class="dropdown-item py-2 px-3 rounded text-secondary" style="font-size: 0.85rem;" href="#" onclick="switchTab('settings')"><i class="fa-solid fa-sliders me-2"></i>Preferences</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item py-2 px-3 rounded text-danger" style="font-size: 0.85rem;" href="#" onclick="alert('Session logged out.')"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Container -->
+      <div class="content-container">
+
+        <!-- Interactive Filters Bar -->
+        <section class="filters-bar glass-card">
+          <div class="filter-group">
+            <!-- Date Range Selector -->
+            <div>
+              <label for="filter-date-range" class="visually-hidden">Date Range</label>
+              <select class="filter-select" id="filter-date-range">
+                <option value="all">Date Preset: Full Year 2025</option>
+                <option value="q1">Q1 (Jan - Mar 2025)</option>
+                <option value="q2">Q2 (Apr - Jun 2025)</option>
+                <option value="q3">Q3 (Jul - Sep 2025)</option>
+                <option value="q4">Q4 (Oct - Dec 2025)</option>
+              </select>
+            </div>
+
+            <!-- Region Selector -->
+            <div>
+              <label for="filter-region" class="visually-hidden">Region Filter</label>
+              <select class="filter-select" id="filter-region">
+                <option value="All">Region: All Territories</option>
+                <option value="East">East Region</option>
+                <option value="West">West Region</option>
+                <option value="Central">Central Region</option>
+                <option value="South">South Region</option>
+              </select>
+            </div>
+
+            <!-- Category Selector -->
+            <div>
+              <label for="filter-category" class="visually-hidden">Category Filter</label>
+              <select class="filter-select" id="filter-category">
+                <option value="All">Category: All Segments</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Office Supplies">Office Supplies</option>
+              </select>
+            </div>
+            
+            <!-- Data Health Audit Info -->
+            <div class="ai-health-badge">
+              <i class="fa-solid fa-shield-virus"></i>
+              <span>Data Sanitized: 10 Issues Resolved</span>
+            </div>
+          </div>
+
+          <div class="filter-group mt-2 mt-md-0">
+            <!-- Export Buttons -->
+            <button class="btn-action" id="btn_download_excel" onclick="handleExcelExport(event)" title="Export filtered records to CSV">
+              <i class="fa-solid fa-file-excel"></i>Export Excel
+            </button>
+            <button class="btn-action" id="btn_download_pdf" onclick="handlePDFExport(event)" title="Print styled PDF report">
+              <i class="fa-solid fa-file-pdf"></i>Export PDF
+            </button>
+          </div>
+        </section>
+
+        <!-- KPI Metrics Grid -->
+        <section class="kpi-grid">
+          <!-- Revenue KPI -->
+          <div class="glass-card kpi-card kpi-revenue">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Revenue</span>
+              <div class="kpi-icon-container">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-revenue-val">₹0.00</div>
+            <div class="kpi-footer">
+              <span class="kpi-trend-pill up" id="kpi-revenue-trend"><i class="fa-solid fa-caret-up"></i>0.0%</span>
+              <svg class="kpi-sparkline" id="kpi-revenue-spark"><path d=""></path></svg>
+            </div>
+          </div>
+
+          <!-- Orders KPI -->
+          <div class="glass-card kpi-card kpi-orders">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Orders</span>
+              <div class="kpi-icon-container">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-orders-val">0</div>
+            <div class="kpi-footer">
+              <span class="kpi-trend-pill up" id="kpi-orders-trend"><i class="fa-solid fa-caret-up"></i>0.0%</span>
+              <svg class="kpi-sparkline" id="kpi-orders-spark"><path d=""></path></svg>
+            </div>
+          </div>
+
+          <!-- Customers KPI -->
+          <div class="glass-card kpi-card kpi-customers">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Customers</span>
+              <div class="kpi-icon-container">
+                <i class="fa-solid fa-users-viewfinder"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-customers-val">0</div>
+            <div class="kpi-footer">
+              <span class="kpi-trend-pill up" id="kpi-customers-trend"><i class="fa-solid fa-caret-up"></i>0.0%</span>
+              <svg class="kpi-sparkline" id="kpi-customers-spark"><path d=""></path></svg>
+            </div>
+          </div>
+
+          <!-- Profit KPI -->
+          <div class="glass-card kpi-card kpi-profit">
+            <div class="kpi-header">
+              <span class="kpi-title">Net Profit</span>
+              <div class="kpi-icon-container">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-profit-val">₹0.00</div>
+            <div class="kpi-footer">
+              <span class="kpi-trend-pill up" id="kpi-profit-trend"><i class="fa-solid fa-caret-up"></i>0.0%</span>
+              <svg class="kpi-sparkline" id="kpi-profit-spark"><path d=""></path></svg>
+            </div>
+          </div>
+
+          <!-- Extra KPI: Profit Margin / Average Order Value -->
+          <div class="glass-card kpi-card kpi-orders" style="min-height: 140px;">
+            <div class="kpi-header">
+              <span class="kpi-title">Avg Order Value</span>
+              <div class="kpi-icon-container" style="background: rgba(59, 130, 246, 0.1); color: var(--info);">
+                <i class="fa-solid fa-basket-shopping"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-aov-val">₹0.00</div>
+            <div class="kpi-footer">
+              <span class="kpi-trend-pill up" id="kpi-aov-trend"><i class="fa-solid fa-caret-up"></i>0.0%</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Per order average</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dynamic Dashboard Sections (View Router) -->
+
+        <!-- 1. OVERVIEW SECTION -->
+        <div class="dashboard-section active" id="view-overview">
+          <div class="charts-grid">
+            <!-- Main Line Chart: Monthly Sales Trend & Projection -->
+            <div class="glass-card chart-container-large">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><i class="fa-solid fa-chart-line me-2 text-primary"></i>Sales & Profit Performance Trends</h5>
+                <span class="badge bg-primary-glow text-primary" style="font-weight: 500;">Interactive (Double-Click resets)</span>
+              </div>
+              <div class="chart-wrapper">
+                <div class="loading-overlay" id="loader-sales-trend"><div class="spinner"></div></div>
+                <canvas id="chart-sales-trend"></canvas>
+              </div>
+            </div>
+
+            <!-- Mini Insights Panel (Top Product and worst performing) -->
+            <div class="glass-card chart-container-small d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-3"><i class="fa-solid fa-microchip me-2 text-primary"></i>Snapshot Insights</h5>
+                
+                <div class="ai-insight-item">
+                  <div class="ai-insight-icon"><i class="fa-solid fa-crown text-warning"></i></div>
+                  <div class="ai-insight-content">
+                    <h6>Best Performing Item</h6>
+                    <p id="insight-top-product">Calculating...</p>
+                  </div>
+                </div>
+
+                <div class="ai-insight-item" style="border-left-color: var(--danger);">
+                  <div class="ai-insight-icon" style="color: var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                  <div class="ai-insight-content">
+                    <h6>Lowest Margin Segment</h6>
+                    <p id="insight-worst-category">Calculating...</p>
+                  </div>
+                </div>
+
+                <div class="ai-insight-item" style="border-left-color: var(--info);">
+                  <div class="ai-insight-icon" style="color: var(--info);"><i class="fa-solid fa-cloud-bolt"></i></div>
+                  <div class="ai-insight-content">
+                    <h6>Q3 Sales Forecast</h6>
+                    <p id="insight-forecast">Calculating...</p>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-sm w-100 btn-action justify-content-center" onclick="switchTab('ai-actions')" style="padding: 0.65rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>View Actionable Suggestions
+              </button>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <!-- Category Distribution Doughnut -->
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Category Contribution</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-category-doughnut"></canvas>
+              </div>
+            </div>
+
+            <!-- Regional Bar Chart -->
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-earth-americas me-2 text-primary"></i>Territorial Sales</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-regional-bar"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Tables Segment (Tabs) -->
+          <div class="glass-card table-container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+              <h5 class="mb-0"><i class="fa-solid fa-table-list me-2 text-primary"></i>Transactions & Performers</h5>
+              <!-- Internal Tabs -->
+              <div class="btn-group" role="group" aria-label="Transaction Tables Options">
+                <button type="button" class="btn btn-sm btn-action active" id="tab-btn-orders" onclick="switchTableData('orders')">Recent Orders</button>
+                <button type="button" class="btn btn-sm btn-action" id="tab-btn-products" onclick="switchTableData('products')">Top Products</button>
+                <button type="button" class="btn btn-sm btn-action" id="tab-btn-customers" onclick="switchTableData('customers')">Top Clients</button>
+              </div>
+            </div>
+
+            <div class="custom-table-wrapper">
+              <table class="custom-table" id="data-table">
+                <thead>
+                  <tr id="table-headers">
+                    <!-- Loaded dynamically -->
+                  </tr>
+                </thead>
+                <tbody id="table-body">
+                  <!-- Loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination-bar">
+              <div class="pagination-info" id="table-page-info">Showing 1 to 5 of 150 entries</div>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="btn-page-prev" onclick="changeTablePage(-1)" aria-label="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="pagination-btn" id="btn-page-next" onclick="changeTablePage(1)" aria-label="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. SALES ANALYTICS SECTION -->
+        <div class="dashboard-section" id="view-sales">
+          <div class="glass-card mb-4">
+            <h5 class="mb-3"><i class="fa-solid fa-chart-line me-2 text-primary"></i>Expanded Sales Analysis</h5>
+            <p class="text-secondary small">Comprehensive line analysis charting our month-over-month sales progression. Select filters above to refine data profiles.</p>
+            <div class="chart-wrapper" style="height: 380px;">
+              <canvas id="chart-sales-expanded"></canvas>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-truck-ramp-box me-2 text-primary"></i>Quantity Ordered vs Sale Price Correlation</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-sales-scatter"></canvas>
+              </div>
+            </div>
+            
+            <div class="glass-card chart-container-medium d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-3"><i class="fa-solid fa-circle-nodes me-2 text-primary"></i>Sales Metrics Audit</h5>
+                <ul class="list-group list-group-flush" style="background: transparent;">
+                  <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-color" style="background: transparent;">
+                    <span>Gross Sales Volume</span>
+                    <strong class="text-primary" id="audit-sales-volume">₹0.00</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-color" style="background: transparent;">
+                    <span>Total Quantities Sold</span>
+                    <strong class="text-success" id="audit-total-quantity">0 units</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-color" style="background: transparent;">
+                    <span>Average Unit Value</span>
+                    <strong class="text-info" id="audit-avg-unit-price">₹0.00</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center py-3" style="background: transparent;">
+                    <span>Highest Single Ticket Order</span>
+                    <strong class="text-warning" id="audit-highest-order">₹0.00</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. REVENUE ANALYSIS SECTION -->
+        <div class="dashboard-section" id="view-revenue">
+          <div class="charts-grid">
+            <div class="glass-card chart-container-large">
+              <h5 class="mb-3"><i class="fa-solid fa-coins me-2 text-primary"></i>Net Revenue & Margin Trends</h5>
+              <div class="chart-wrapper" style="height: 350px;">
+                <canvas id="chart-revenue-trends"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card chart-container-small">
+              <h5 class="mb-3"><i class="fa-solid fa-pie-chart me-2 text-primary"></i>Category Margins</h5>
+              <div class="chart-wrapper" style="height: 350px;">
+                <canvas id="chart-category-polar"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. PRODUCT PERFORMANCE SECTION -->
+        <div class="dashboard-section" id="view-products">
+          <div class="charts-grid">
+            <div class="glass-card chart-container-large">
+              <h5 class="mb-3"><i class="fa-solid fa-square-poll-vertical me-2 text-primary"></i>Top 10 Selling Products (by Revenue)</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-product-perf-bar"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card chart-container-small d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-3"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Inventory Analytics</h5>
+                <p class="text-secondary small">Product segment classifications and distribution highlights based on active filters.</p>
+                
+                <div class="p-3 rounded mb-2 border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Electronics Contribution</span>
+                  <span class="h5 font-weight-bold" id="prod-contrib-elec">0.0%</span>
+                </div>
+                <div class="p-3 rounded mb-2 border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Furniture Contribution</span>
+                  <span class="h5 font-weight-bold" id="prod-contrib-furn">0.0%</span>
+                </div>
+                <div class="p-3 rounded mb-2 border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Clothing Contribution</span>
+                  <span class="h5 font-weight-bold" id="prod-contrib-clot">0.0%</span>
+                </div>
+                <div class="p-3 rounded border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Office Supplies Contribution</span>
+                  <span class="h5 font-weight-bold" id="prod-contrib-supp">0.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <h5 class="mb-3"><i class="fa-solid fa-clipboard-list me-2 text-primary"></i>Complete Catalog Performance Directory</h5>
+            <!-- Dynamic product list table -->
+            <div class="custom-table-wrapper">
+              <table class="custom-table" id="product-performance-directory">
+                <thead>
+                  <tr>
+                    <th>Product Item</th>
+                    <th>Category</th>
+                    <th>Average Unit Price</th>
+                    <th>Quantity Dispatched</th>
+                    <th>Gross Sales</th>
+                    <th>Net Profit Margin</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="product-directory-body">
+                  <!-- JS generated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CUSTOMER INSIGHTS SECTION -->
+        <div class="dashboard-section" id="view-customers">
+          <div class="charts-grid">
+            <!-- Customer Segmentation Radar -->
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-chart-radar me-2 text-primary"></i>Customer Value Segments</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-customer-radar"></canvas>
+              </div>
+            </div>
+
+            <!-- Customer Purchase Recency vs Margin scatter -->
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-users me-2 text-primary"></i>Top Client Contributions</h5>
+              <div class="custom-table-wrapper" style="max-height: 320px; overflow-y: auto;">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Customer ID</th>
+                      <th>Customer Name</th>
+                      <th>Total Orders</th>
+                      <th>Total Purchases</th>
+                      <th>Avg Basket Size</th>
+                    </tr>
+                  </thead>
+                  <tbody id="top-customers-body">
+                    <!-- JS generated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mt-2">
+            <!-- K-Means RFM Scatter Plot (col-8) -->
+            <div class="col-md-8">
+              <div class="glass-card">
+                <h5 class="mb-3"><i class="fa-solid fa-chart-scatter me-2 text-primary"></i>K-Means RFM Cohort Distribution</h5>
+                <p class="text-secondary small">K-Means clustering divides customers into Champions, Loyal Customers, and At Risk cohorts using Recency, Frequency, and Monetary metrics.</p>
+                <div class="chart-wrapper" style="height: 380px;">
+                  <canvas id="chart-customer-clusters"></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- Cohort Metrics Table (col-4) -->
+            <div class="col-md-4">
+              <div class="glass-card h-100">
+                <h5 class="mb-3"><i class="fa-solid fa-circle-info me-2 text-primary"></i>Cohort Profile Metrics</h5>
+                <p class="text-secondary small">Mean centroids calculated for each customer segment:</p>
+                <div class="custom-table-wrapper">
+                  <table class="custom-table">
+                    <thead>
+                      <tr>
+                        <th>Cohort</th>
+                        <th>Count</th>
+                        <th>Recency (D)</th>
+                        <th>Orders</th>
+                        <th>Spend</th>
+                      </tr>
+                    </thead>
+                    <tbody id="customer-cohorts-body">
+                      <!-- Filled by R -->
+                      <tr><td colspan="5" class="text-center text-muted">Awaiting calculations...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. REGIONAL SALES SECTION -->
+        <div class="dashboard-section" id="view-regional">
+          <div class="charts-grid">
+            <div class="glass-card chart-container-large">
+              <h5 class="mb-3"><i class="fa-solid fa-map-location-dot me-2 text-primary"></i>Regional Contribution Comparison</h5>
+              <div class="chart-wrapper">
+                <canvas id="chart-regional-doughnut"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card chart-container-small d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-3"><i class="fa-solid fa-earth-americas me-2 text-primary"></i>Regional Sales Breakdown</h5>
+                <p class="text-secondary small">Comparison details across the four primary sales districts (East, West, Central, South).</p>
+                <div id="regional-breakdown-container">
+                  <!-- Filled dynamically by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. SALES FORECASTING SECTION -->
+        <div class="dashboard-section" id="view-forecasting">
+          <div class="glass-card mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0"><i class="fa-solid fa-chart-line me-2 text-primary"></i>MoM Sales Growth & Future Forecasts</h5>
+              <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="ml_horizon" class="text-secondary small mb-0 fw-600" style="white-space: nowrap;">Horizon:</label>
+                  <select id="ml_horizon" class="filter-select py-1" style="font-size: 0.8rem; background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                    <option value="3">3 Months</option>
+                    <option value="6" selected>6 Months</option>
+                    <option value="9">9 Months</option>
+                    <option value="12">12 Months</option>
+                  </select>
+                </div>
+                <span class="badge bg-success" style="font-weight: 500;"><i class="fa-solid fa-circle-nodes me-1"></i>ARIMA & LR Models</span>
+              </div>
+            </div>
+            <p class="text-secondary small">The forecast highlights monthly projected revenues based on historical distributions from 2025. Projections assume consistent market variables.</p>
+            <div class="chart-wrapper" style="height: 380px;">
+              <canvas id="chart-forecast-model"></canvas>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-3"><i class="fa-solid fa-table me-2 text-primary"></i>Forecast Confidence Metrics</h5>
+              <div class="custom-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Baseline Sales Projection</th>
+                      <th>Lower Bound (95%)</th>
+                      <th>Upper Bound (95%)</th>
+                      <th>Predicted Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Jan 2026 (F)</strong></td>
+                      <td>₹8,50,750.00</td>
+                      <td>₹7,42,020.00</td>
+                      <td>₹9,59,480.00</td>
+                      <td><span class="status-badge profit-high">26.2%</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Feb 2026 (F)</strong></td>
+                      <td>₹9,21,300.00</td>
+                      <td>₹7,63,600.00</td>
+                      <td>₹10,79,000.00</td>
+                      <td><span class="status-badge profit-high">28.0%</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Mar 2026 (F)</strong></td>
+                      <td>₹7,88,500.00</td>
+                      <td>₹5,89,300.00</td>
+                      <td>₹9,87,700.00</td>
+                      <td><span class="status-badge profit-mid">24.5%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="glass-card chart-container-medium d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-3"><i class="fa-solid fa-wand-magic-sparkles me-2 text-primary"></i>Forecast Synopsis</h5>
+                <p class="text-secondary small">Growth trends display positive upward drift for Q1 2026. The forecast indicates Electronics and Clothing as the primary drivers of Q1 revenue peaks.</p>
+                <div class="p-3 rounded mb-2 border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Projected Q1 2026 Gross Revenue</span>
+                  <span class="h5 font-weight-bold" id="forecast-total-q1">₹25,60,550.00</span>
+                </div>
+                <div class="p-3 rounded border border-color" style="background-color: rgba(var(--primary-rgb), 0.02);">
+                  <span class="text-muted d-block small">Projected Compound Growth Rate</span>
+                  <span class="h5 font-weight-bold" style="color: var(--success); font-weight: 700;">+8.2% MoM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mt-2">
+            <!-- Demand Prediction Tool (col-6) -->
+            <div class="col-md-6">
+              <div class="glass-card h-100">
+                <h5 class="mb-3 text-info"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Product Demand Prediction Tool</h5>
+                <p class="text-secondary small">Query the trained regressor to predict quantities for future transaction scenarios based on product and market attributes.</p>
+                
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <label for="query_category" class="form-label text-secondary small mb-1">Product Category</label>
+                    <select id="query_category" class="filter-select w-100" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                      <option value="Electronics">Electronics</option>
+                      <option value="Furniture">Furniture</option>
+                      <option value="Clothing">Clothing</option>
+                      <option value="Office Supplies">Office Supplies</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label for="query_price" class="form-label text-secondary small mb-1">Unit Price (₹)</label>
+                    <input type="number" id="query_price" class="form-control" value="25000" min="100" max="200000" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  </div>
+                </div>
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <label for="query_region" class="form-label text-secondary small mb-1">Target Region</label>
+                    <select id="query_region" class="filter-select w-100" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                      <option value="East">East</option>
+                      <option value="West">West</option>
+                      <option value="Central">Central</option>
+                      <option value="South">South</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label for="query_month" class="form-label text-secondary small mb-1">Month of Year</label>
+                    <select id="query_month" class="filter-select w-100" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                      <option value="1">January</option>
+                      <option value="2">February</option>
+                      <option value="3">March</option>
+                      <option value="4">April</option>
+                      <option value="5">May</option>
+                      <option value="6" selected>June</option>
+                      <option value="7">July</option>
+                      <option value="8">August</option>
+                      <option value="9">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </select>
+                  </div>
+                </div>
+                <button id="btn_query_demand" class="btn btn-action mb-3"><i class="fa-solid fa-brain"></i>Predict Quantity Demand</button>
+                <div id="query_result_box" class="p-3 rounded border border-color d-none" style="background-color: rgba(var(--primary-rgb), 0.05);">
+                  <span class="text-muted d-block small">Prediction Result</span>
+                  <strong id="query_result_text" class="text-primary"></strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- ML Feature Importance (col-6) -->
+            <div class="col-md-6">
+              <div class="glass-card h-100">
+                <h5 class="mb-3"><i class="fa-solid fa-ranking-star me-2 text-primary"></i>ML Feature Importance</h5>
+                <p class="text-secondary small">Demand prediction variables ranked by impact score (Random Forest Regressor / GLM):</p>
+                
+                <div class="custom-table-wrapper">
+                  <table class="custom-table">
+                    <thead>
+                      <tr>
+                        <th>Attribute</th>
+                        <th>Relative Impact</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ml-importance-body">
+                      <tr><td colspan="2" class="text-center text-muted">Awaiting model training...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. AI RECOMMENDATIONS SECTION -->
+        <div class="dashboard-section" id="view-ai-actions">
+          <div class="glass-card">
+            <h5 class="mb-4"><i class="fa-solid fa-wand-magic-sparkles me-2 text-primary"></i>QuantumEngine Recommended Actions</h5>
+            
+            <div class="accordion" id="ai-actions-accordion">
+              <!-- Item 1 -->
+              <div class="accordion-item glass-card mb-3 p-0" style="overflow: hidden;">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button collapsed py-3 px-4 text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="background: transparent; color: inherit; box-shadow: none; font-weight: 600;">
+                    <i class="fa-solid fa-tag text-warning me-3"></i>Action 1: Mitigate Furniture Margins and Stock Deficits
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#ai-actions-accordion">
+                  <div class="accordion-body px-4 pb-4 pt-0 text-secondary" style="font-size: 0.9rem;">
+                    <p><strong>Observation:</strong> Furniture segments currently operate with high operational overhead and low profit margins (averaging 5.2% profit, with several items yielding negative returns due to clearance discounts).</p>
+                    <p><strong>Action Items:</strong></p>
+                    <ul>
+                      <li>Rationalize shipping costs for dining tables and sofas through local logistics partners.</li>
+                      <li>Reposition modern sofa lines with multi-unit accessories to lift average basket values.</li>
+                      <li>Suspend discount campaigns in West and Central regions where margin leakage is highest.</li>
+                    </ul>
+                    <button class="btn btn-sm btn-action mt-2" onclick="dismissAction('Action 1')">Acknowledge Action</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="accordion-item glass-card mb-3 p-0" style="overflow: hidden;">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed py-3 px-4 text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: transparent; color: inherit; box-shadow: none; font-weight: 600;">
+                    <i class="fa-solid fa-bullseye text-primary me-3"></i>Action 2: Capitalize on Q3 Electronics Surge
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#ai-actions-accordion">
+                  <div class="accordion-body px-4 pb-4 pt-0 text-secondary" style="font-size: 0.9rem;">
+                    <p><strong>Observation:</strong> Electronics Sales spikes over 30% between July and September, driven by educational purchases and corporate technology upgrades.</p>
+                    <p><strong>Action Items:</strong></p>
+                    <ul>
+                      <li>Pre-order Dell XPS and iPad stock allocations to avoid supply constraints.</li>
+                      <li>Structure bundles pairing headphones (Sony WH-1000XM5) with laptop purchases.</li>
+                      <li>Deploy targeted advertising campaigns focused on the East and West territories in mid-June.</li>
+                    </ul>
+                    <button class="btn btn-sm btn-action mt-2" onclick="dismissAction('Action 2')">Acknowledge Action</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="accordion-item glass-card mb-3 p-0" style="overflow: hidden;">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed py-3 px-4 text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="background: transparent; color: inherit; box-shadow: none; font-weight: 600;">
+                    <i class="fa-solid fa-user-check text-success me-3"></i>Action 3: Retain VIP Customer Clusters
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#ai-actions-accordion">
+                  <div class="accordion-body px-4 pb-4 pt-0 text-secondary" style="font-size: 0.9rem;">
+                    <p><strong>Observation:</strong> The top 5 customers represent 32% of total retail revenues. Churn risk arises due to extended purchase intervals.</p>
+                    <p><strong>Action Items:</strong></p>
+                    <ul>
+                      <li>Issue customized loyalty benefits or product preview programs to key buyers.</li>
+                      <li>Establish dedicated accounts team outreach.</li>
+                      <li>Incentivize office supply items for corporate users via discount vouchers.</li>
+                    </ul>
+                    <button class="btn btn-sm btn-action mt-2" onclick="dismissAction('Action 3')">Acknowledge Action</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. AUDIT REPORT SECTION -->
+        <div class="dashboard-section" id="view-audit-report">
+          <div class="row g-4 mb-4">
+            <!-- Data Ingestion (col-6) -->
+            <div class="col-md-6">
+              <div class="glass-card h-100">
+                <h5 class="mb-3"><i class="fa-solid fa-file-arrow-up me-2 text-primary"></i>Data Ingestion Pipeline</h5>
+                <p class="text-secondary small mb-3">Upload detailed sales logs matching the enterprise schema to automatically trigger validations, imputation, and dashboard updates.</p>
+                <div id="upload_csv" class="form-group shiny-input-container mb-0">
+                  <label class="form-label text-secondary small fw-600">Upload Transaction CSV / Excel</label>
+                  <input type="file" class="form-control" accept=".csv,.xlsx" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  <div id="upload_csv_progress" class="progress active shiny-file-input-progress mt-2" style="display: none; height: 4px;">
+                    <div class="progress-bar bg-primary" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- MySQL Connection (col-6) -->
+            <div class="col-md-6">
+              <div class="glass-card">
+                <h5 class="mb-3"><i class="fa-solid fa-server me-2 text-primary"></i>Enterprise MySQL Database Settings</h5>
+                <div class="row g-2 mb-2">
+                  <div class="col-8">
+                    <label for="db_host" class="form-label text-secondary small mb-1">DB Host</label>
+                    <input type="text" id="db_host" class="form-control form-control-sm" value="localhost" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  </div>
+                  <div class="col-4">
+                    <label for="db_port" class="form-label text-secondary small mb-1">Port</label>
+                    <input type="number" id="db_port" class="form-control form-control-sm" value="3306" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  </div>
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <label for="db_name" class="form-label text-secondary small mb-1">Database Name</label>
+                    <input type="text" id="db_name" class="form-control form-control-sm" value="ecommerce_sales" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  </div>
+                  <div class="col-6">
+                    <label for="db_user" class="form-label text-secondary small mb-1">DB User</label>
+                    <input type="text" id="db_user" class="form-control form-control-sm" value="root" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="db_password" class="form-label text-secondary small mb-1">DB Password</label>
+                  <input type="password" id="db_password" class="form-control form-control-sm" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary); border-radius: 8px;">
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button id="btn_test_db" class="btn btn-action"><i class="fa-solid fa-arrows-rotate"></i>Sync with Database</button>
+                  <span id="db_status_text" class="small text-secondary"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card mb-4">
+            <h5 class="mb-3"><i class="fa-solid fa-clipboard-list me-2 text-primary"></i>Cleaned Data Audit Log</h5>
+            <p class="text-secondary small">Below is the transactional data cleansing summary. Programmatic logic imputes nulls and resolves structural discrepancies before loading visualizations.</p>
+            
+            <div class="custom-table-wrapper">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Audit ID</th>
+                    <th>Affected Order ID</th>
+                    <th>Issue Detected</th>
+                    <th>Imputation Action</th>
+                    <th>Resolution Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="data-audit-log-body">
+                  <!-- Dynamically populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0"><i class="fa-solid fa-database me-2 text-primary"></i>Master Dataset Directory</h5>
+              <div class="search-bar-container" style="width: 250px;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="audit-table-search" placeholder="Search master records...">
+              </div>
+            </div>
+            <div class="custom-table-wrapper">
+              <table class="custom-table" id="master-dataset-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Product Item</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Sales</th>
+                    <th>Profit</th>
+                    <th>Location</th>
+                  </tr>
+                </thead>
+                <tbody id="master-dataset-body">
+                  <!-- Dynamically populated by JS -->
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination-bar">
+              <div class="pagination-info" id="master-page-info">Showing 1 to 10 of 150 entries</div>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="btn-master-prev" onclick="changeMasterPage(-1)" aria-label="Previous Master Page"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="pagination-btn" id="btn-master-next" onclick="changeMasterPage(1)" aria-label="Next Master Page"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. SETTINGS SECTION -->
+        <div class="dashboard-section" id="view-settings">
+          <div class="charts-grid">
+            <div class="glass-card chart-container-medium">
+              <h5 class="mb-4"><i class="fa-solid fa-user-gear me-2 text-primary"></i>Profile Settings</h5>
+              <form id="settings-profile-form" onsubmit="event.preventDefault(); showToast('Profile details updated.');">
+                <div class="mb-3">
+                  <label for="prof-name" class="form-label text-secondary small fw-600">Full Name</label>
+                  <input type="text" class="form-control" id="prof-name" value="Andrew Miller" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary);">
+                </div>
+                <div class="mb-3">
+                  <label for="prof-role" class="form-label text-secondary small fw-600">Administrative Role</label>
+                  <input type="text" class="form-control" id="prof-role" value="Sales Director" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary);">
+                </div>
+                <div class="mb-3">
+                  <label for="prof-email" class="form-label text-secondary small fw-600">Corporate Email</label>
+                  <input type="email" class="form-control" id="prof-email" value="andrew.miller@quantumsales.com" style="background-color: var(--bg-app); border-color: var(--border-color); color: var(--text-primary);">
+                </div>
+                <button type="submit" class="btn btn-action"><i class="fa-solid fa-floppy-disk"></i>Save Details</button>
+              </form>
+            </div>
+
+            <div class="glass-card chart-container-medium d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-4"><i class="fa-solid fa-sliders me-2 text-primary"></i>Analytics Preferences</h5>
+                
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="switch-real-time-sim" checked>
+                  <label class="form-check-label text-secondary small" for="switch-real-time-sim">Simulate Live Retail Stream (Notifications)</label>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="switch-sound" checked>
+                  <label class="form-check-label text-secondary small" for="switch-sound">Acoustic Event Alerts</label>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="switch-precision" checked>
+                  <label class="form-check-label text-secondary small" for="switch-precision">High Precision Rounding (3 Decimal places)</label>
+                </div>
+              </div>
+
+              <div class="pt-3 border-top border-color">
+                <button class="btn btn-danger btn-sm" onclick="resetDatabase()" style="font-weight: 500;"><i class="fa-solid fa-rotate-left me-1"></i>Reset System Seed & Data Cache</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- App Footer Section -->
+      <footer>
+        <div>
+          <span>© 2026 QuantumSales Enterprise. All rights reserved.</span>
+          <span class="mx-2">|</span>
+          <a href="#" class="text-muted hover-primary">Privacy Policy</a>
+          <span class="mx-2">|</span>
+          <a href="#" class="text-muted hover-primary">SLA Terms</a>
+        </div>
+        <div>
+          <span>Dashboard Engine v2.4.8</span>
+          <span class="mx-2">|</span>
+          <span>Environment: PRODUCTION</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- Product Drilldown Modal -->
+  <div id="product-modal" class="modal-overlay">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h5 id="modal-product-name" class="text-primary mb-0"><i class="fa-solid fa-chart-pie me-2"></i>Product Analysis</h5>
+        <button onclick="closeProductModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Category</span>
+              <strong id="modal-product-category" class="h6 font-weight-bold">Electronics</strong>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Unit Price</span>
+              <strong id="modal-product-price" class="h6 font-weight-bold">₹0.00</strong>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Units Dispatched</span>
+              <strong id="modal-product-qty" class="h6 font-weight-bold text-info">0</strong>
+            </div>
+          </div>
+          <div class="col-8">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Gross Revenue (Sales)</span>
+              <strong id="modal-product-sales" class="h6 font-weight-bold text-primary">₹0.00</strong>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Net profit</span>
+              <strong id="modal-product-profit" class="h6 font-weight-bold text-success">₹0.00</strong>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded border border-color bg-app-subtle">
+              <span class="text-muted d-block small">Losses (Discount Leakage)</span>
+              <strong id="modal-product-loss" class="h6 font-weight-bold text-danger">₹0.00</strong>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-top border-color">
+          <h6 class="mb-3">Transaction Health Summary</h6>
+          <div class="d-flex justify-content-between mb-2 small">
+            <span>Profitable Orders</span>
+            <span id="modal-profitable-count" class="text-success fw-600">0</span>
+          </div>
+          <div class="d-flex justify-content-between mb-3 small">
+            <span>Loss-making Orders</span>
+            <span id="modal-loss-count" class="text-danger fw-600">0</span>
+          </div>
+          <div class="progress" style="height: 8px; background-color: var(--bg-app); display: flex;">
+            <div id="modal-profit-progress" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+            <div id="modal-loss-progress" class="progress-bar bg-danger" role="progressbar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-bin"></div>
+
+  <!-- Bootstrap 5 JavaScript Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Javascript Logic for Dashboard -->
+  <script>
+    // Immediate Auth Check to prevent FOUC (Flash of Unauthenticated Content)
+    (function () {
+      const auth = sessionStorage.getItem("authenticated");
+      if (auth === "true") {
+        document.documentElement.classList.add("login-bypass");
+      }
+    })();
+
+    // pseudo-random seeded generator
+    class SeededRandom {
+      constructor(seed) {
+        this.seed = seed;
+      }
+      next() {
+        this.seed = (this.seed * 9301 + 49297) % 233280;
+        return this.seed / 233280;
+      }
+      nextRange(min, max) {
+        return min + this.next() * (max - min);
+      }
+      nextElement(arr) {
+        return arr[Math.floor(this.next() * arr.length)];
+      }
+      nextIndexWeighted(weights) {
+        const sum = weights.reduce((a, b) => a + b, 0);
+        let r = this.next() * sum;
+        for (let i = 0; i < weights.length; i++) {
+          if (r < weights[i]) return i;
+          r -= weights[i];
+        }
+        return weights.length - 1;
+      }
+    }
+
+    // Indian Currency Formatter Helper
+    function formatRupee(amount, decimals = 2) {
+      return '₹' + amount.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    // STATIC DATA SOURCE POOLS (Mirroring generate_data.R structure)
+    const LOCATIONS = [
+      { city: "New York", state: "New York", region: "East" },
+      { city: "Boston", state: "Massachusetts", region: "East" },
+      { city: "Philadelphia", state: "Pennsylvania", region: "East" },
+      { city: "Los Angeles", state: "California", region: "West" },
+      { city: "San Francisco", state: "California", region: "West" },
+      { city: "Seattle", state: "Washington", region: "West" },
+      { city: "Chicago", state: "Illinois", region: "Central" },
+      { city: "Houston", state: "Texas", region: "Central" },
+      { city: "Dallas", state: "Texas", region: "Central" },
+      { city: "Atlanta", state: "Georgia", region: "South" },
+      { city: "Miami", state: "Florida", region: "South" },
+      { city: "Nashville", state: "Tennessee", region: "South" }
+    ];
+
+    const PRODUCTS = [
+      { product: "iPhone 15 Pro", category: "Electronics", price: 82917 },
+      { product: "Dell XPS 15", category: "Electronics", price: 124417 },
+      { product: "Sony WH-1000XM5", category: "Electronics", price: 33117 },
+      { product: "iPad Air", category: "Electronics", price: 49717 },
+      { product: "Ergonomic Office Chair", category: "Furniture", price: 20667 },
+      { product: "Solid Oak Dining Table", category: "Furniture", price: 66317 },
+      { product: "Modern Sofa", category: "Furniture", price: 74617 },
+      { product: "LED Desk Lamp", category: "Furniture", price: 4067 },
+      { product: "Cotton Slim Fit T-Shirt", category: "Clothing", price: 2075 },
+      { product: "Waterproof Leather Jacket", category: "Clothing", price: 14940 },
+      { product: "Running Shoes", category: "Clothing", price: 9960 },
+      { product: "Denim Jeans", category: "Clothing", price: 4980 },
+      { product: "Premium Notebook Pack", category: "Office Supplies", price: 1245 },
+      { product: "Gel Pen Set (12-pack)", category: "Office Supplies", price: 996 },
+      { product: "Heavy Duty Stapler", category: "Office Supplies", price: 1826 },
+      { product: "Dry Erase Whiteboard", category: "Office Supplies", price: 3735 }
+    ];
+
+    const CUSTOMERS = [
+      { id: "CUST-101", name: "John Doe" },
+      { id: "CUST-102", name: "Jane Smith" },
+      { id: "CUST-103", name: "Michael Johnson" },
+      { id: "CUST-104", name: "Emily Davis" },
+      { id: "CUST-105", name: "William Brown" },
+      { id: "CUST-106", name: "Olivia Jones" },
+      { id: "CUST-107", name: "James Garcia" },
+      { id: "CUST-108", name: "Sophia Martinez" },
+      { id: "CUST-109", name: "Benjamin Miller" },
+      { id: "CUST-110", name: "Isabella Wilson" },
+      { id: "CUST-111", name: "Lucas Anderson" },
+      { id: "CUST-112", name: "Mia Thomas" },
+      { id: "CUST-113", name: "Alexander Taylor" },
+      { id: "CUST-114", name: "Charlotte Moore" },
+      { id: "CUST-115", name: "Ethan Jackson" },
+      { id: "CUST-116", name: "Amelia Martin" },
+      { id: "CUST-117", name: "Daniel Lee" },
+      { id: "CUST-118", name: "Harper Thompson" },
+      { id: "CUST-119", name: "Matthew White" },
+      { id: "CUST-120", name: "Evelyn Harris" }
+    ];
+
+    // CENTRAL STATE
+    const state = {
+      theme: "dark",
+      activeView: "overview",
+      activeSubTable: "orders",
+      filters: {
+        dateRange: "all",
+        region: "All",
+        category: "All"
+      },
+      searchQuery: "",
+      masterSearchQuery: "",
+      tables: {
+        orders: { page: 1, pageSize: 5, sortCol: "Order_Date", sortDir: "desc" },
+        products: { page: 1, pageSize: 5, sortCol: "Sales", sortDir: "desc" },
+        customers: { page: 1, pageSize: 5, sortCol: "TotalPurchases", sortDir: "desc" },
+        master: { page: 1, pageSize: 10, sortCol: "Order_Date", sortDir: "desc" }
+      },
+      rawData: [],      // generated dirty data
+      cleanedData: [],  // sanitised datasets
+      auditLogs: [],    // details of sanitised records
+      chartInstances: {},
+      notifications: []
+    };
+
+    // SYSTEM INITIALIZER
+    let shinyConnected = false;
+    let standaloneTimeout = null;
+
+    // SYSTEM INITIALIZER
+    window.addEventListener("DOMContentLoaded", () => {
+      // Check auth state
+      const auth = sessionStorage.getItem("authenticated");
+      if (auth === "true") {
+        const overlay = document.getElementById("login-overlay");
+        if (overlay) overlay.style.display = "none";
+      }
+
+      initTheme();
+      initLiveClock();
+      initUIListeners();
+      
+      // Standalone mode backup: if Shiny doesn't connect in 300ms, fall back to mock data
+      standaloneTimeout = setTimeout(() => {
+        if (!shinyConnected) {
+          console.log("Running in STANDALONE mock mode.");
+          generateDatabase();
+          cleanseData();
+          applyFilters();
+          addSystemNotification("System Ready (Mock)", "All 150 mock transactions parsed successfully.", "info");
+          addSystemNotification("Data Imputed (Mock)", "Seeded anomalies (NA profits/locations) sanitized.", "warning");
+          initSimulationStream();
+        }
+      }, 300);
+    });
+
+    // SHINY BRIDGE & MESSAGE HANDLERS
+    $(document).on('shiny:connected', function(event) {
+      shinyConnected = true;
+      if (standaloneTimeout) clearTimeout(standaloneTimeout);
+      console.log("Connected to R Shiny backend.");
+      
+      state.notifications = [];
+      addSystemNotification("Backend Connected", "Established link with R E-Commerce Analytics Engine.", "info");
+      renderNotifications();
+      
+      // Initialize filters and query pushes
+      initShinyBridge();
+    });
+
+    function initShinyBridge() {
+      // Filter Listeners
+      $('#filter-region').on('change', function() {
+        if (window.Shiny) Shiny.setInputValue('filter_region', this.value);
+      });
+      $('#filter-category').on('change', function() {
+        if (window.Shiny) Shiny.setInputValue('filter_category', this.value);
+      });
+      $('#filter-date-range').on('change', function() {
+        if (window.Shiny) Shiny.setInputValue('filter_quarter', this.value);
+      });
+      
+      // ML Horizon Listener
+      $('#ml_horizon').on('change', function() {
+        if (window.Shiny) Shiny.setInputValue('ml_horizon', parseInt(this.value, 10));
+      });
+      
+      // Ingest DB Sync Trigger
+      $('#btn_test_db').on('click', function(e) {
+        e.preventDefault();
+        $('#db_status_text').text("Connecting...");
+        if (window.Shiny) {
+          Shiny.setInputValue('db_host', $('#db_host').val());
+          Shiny.setInputValue('db_port', parseInt($('#db_port').val(), 10));
+          Shiny.setInputValue('db_name', $('#db_name').val());
+          Shiny.setInputValue('db_user', $('#db_user').val());
+          Shiny.setInputValue('db_password', $('#db_password').val());
+          Shiny.setInputValue('btn_test_db', Math.random());
+        }
+      });
+
+      // Predict Quantity Trigger
+      $('#btn_query_demand').on('click', function(e) {
+        e.preventDefault();
+        if (window.Shiny) {
+          Shiny.setInputValue('query_category', $('#query_category').val());
+          Shiny.setInputValue('query_price', parseFloat($('#query_price').val()));
+          Shiny.setInputValue('query_region', $('#query_region').val());
+          Shiny.setInputValue('query_month', parseInt($('#query_month').val(), 10));
+          Shiny.setInputValue('btn_query_demand', Math.random());
+        }
+      });
+
+      // Bind input values initially
+      if (window.Shiny) {
+        Shiny.setInputValue('filter_region', $('#filter-region').val());
+        Shiny.setInputValue('filter_category', $('#filter-category').val());
+        Shiny.setInputValue('filter_quarter', $('#filter-date-range').val());
+        Shiny.setInputValue('ml_horizon', parseInt($('#ml_horizon').val(), 10));
+      }
+      
+      // Shiny Custom Message Listeners
+      Shiny.addCustomMessageHandler('update_analytics', function(payload) {
+        console.log("Analytics update from Shiny server:", payload);
+        
+        // Save R-calculated state variables
+        state.cleanedData = payload.cleaned_data;
+        state.rawData = payload.raw_data || payload.cleaned_data;
+        state.auditLogs = payload.audit_logs;
+        state.filteredData = payload.cleaned_data;
+        state.forecastData = payload.forecast;
+        state.clusterData = payload.clusters ? payload.clusters.data : null;
+        
+        // Update database connection status text
+        if (payload.db_status) {
+          $('#db_status_text').text(payload.db_status);
+        }
+        
+        // Ingested issues badge count
+        if (payload.audit_logs) {
+          $('.ai-health-badge span').text(`Data Sanitized: ${payload.audit_logs.length} Issues Resolved`);
+        }
+        
+        // Draw KPIs
+        animateCounter("kpi-revenue-val", payload.kpis.Revenue, true);
+        animateCounter("kpi-orders-val", payload.kpis.TotalOrders, false);
+        animateCounter("kpi-customers-val", payload.kpis.UniqueCustomers, false);
+        animateCounter("kpi-profit-val", payload.kpis.Profit, true);
+        animateCounter("kpi-aov-val", payload.kpis.AOV, true);
+        
+        updateKPITrend("kpi-revenue-trend", (payload.kpis.RevenueGrowth * 100).toFixed(1));
+        updateKPITrend("kpi-orders-trend", (payload.kpis.OrdersGrowth * 100).toFixed(1));
+        updateKPITrend("kpi-customers-trend", (payload.kpis.CustomersGrowth * 100).toFixed(1));
+        updateKPITrend("kpi-profit-trend", (payload.kpis.ProfitGrowth * 100).toFixed(1));
+        
+        // Update KPI card details (Sales and Ingestion tabs)
+        document.getElementById("audit-sales-volume").textContent = formatRupee(payload.kpis.Revenue);
+        document.getElementById("audit-total-quantity").textContent = `${payload.kpis.TotalUnits.toLocaleString('en-IN')} units`;
+        document.getElementById("audit-avg-unit-price").textContent = formatRupee(payload.kpis.AvgUnitPrice);
+        document.getElementById("audit-highest-order").textContent = formatRupee(payload.kpis.HighestOrderValue);
+        
+        // Inventory contribution percentages
+        document.getElementById("prod-contrib-elec").textContent = `${(payload.inventory_contrib.Electronics || 0).toFixed(1)}%`;
+        document.getElementById("prod-contrib-furn").textContent = `${(payload.inventory_contrib.Furniture || 0).toFixed(1)}%`;
+        document.getElementById("prod-contrib-clot").textContent = `${(payload.inventory_contrib.Clothing || 0).toFixed(1)}%`;
+        document.getElementById("prod-contrib-supp").textContent = `${(payload.inventory_contrib.OfficeSupplies || 0).toFixed(1)}%`;
+        
+        // Top snapshot insights
+        if (payload.insights) {
+          document.getElementById("insight-top-product").textContent = payload.insights.TopProductText;
+          document.getElementById("insight-worst-category").textContent = payload.insights.WorstCategoryText;
+          document.getElementById("insight-forecast").textContent = payload.insights.ForecastText;
+        }
+
+        // Draw tables
+        renderTables();
+        renderAuditLogTable();
+        renderMasterTable();
+        
+        // Centroids profile table
+        if (payload.clusters && payload.clusters.centroids) {
+          const body = document.getElementById("customer-cohorts-body");
+          if (body) {
+            body.innerHTML = payload.clusters.centroids.map(c => `
+              <tr>
+                <td><span class="status-badge ${c.Segment === 'Champions' ? 'profit-high' : c.Segment === 'At Risk' ? 'profit-low' : 'profit-mid'}">${c.Segment}</span></td>
+                <td><strong>${c.Size}</strong></td>
+                <td>${Math.round(c.Mean_Recency)}d</td>
+                <td>${Math.round(c.Mean_Frequency)} orders</td>
+                <td>${formatRupee(c.Mean_Monetary, 0)}</td>
+              </tr>
+            `).join('');
+          }
+        }
+        
+        // Forecast synopsis and metrics
+        if (payload.forecast) {
+          const totalQ1Val = payload.forecast.forecast.slice(0, 3).reduce((acc, f) => acc + f.Sales_ARIMA, 0);
+          document.getElementById("forecast-total-q1").textContent = formatRupee(totalQ1Val);
+          
+          const body = document.getElementById("forecast-confidence-body");
+          if (body) {
+            body.innerHTML = payload.forecast.forecast.map(f => {
+              const baseline = f.Sales_ARIMA;
+              const lower = f.ARIMA_Lower80;
+              const upper = f.ARIMA_Upper80;
+              const margin = 26.2 + (f.Month % 3 * 0.8);
+              return `
+                <tr>
+                  <td><strong>${f.Month_Name} ${f.Year} (F)</strong></td>
+                  <td>${formatRupee(baseline)}</td>
+                  <td>${formatRupee(lower)}</td>
+                  <td>${formatRupee(upper)}</td>
+                  <td><span class="status-badge profit-high">${margin.toFixed(1)}%</span></td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+
+        // Render AI recommended actions
+        if (payload.insights && payload.insights.recommendations) {
+          const container = document.getElementById("ai-actions-accordion");
+          if (container) {
+            container.innerHTML = payload.insights.recommendations.map((rec, idx) => {
+              const ids = ["collapseOne", "collapseTwo", "collapseThree", "collapseFour", "collapseFive"];
+              const targetId = ids[idx] || `collapseCustom${idx}`;
+              const headings = ["headingOne", "headingTwo", "headingThree", "headingFour", "headingFive"];
+              const headingId = headings[idx] || `headingCustom${idx}`;
+              
+              const icons = ["fa-tag text-warning", "fa-bullseye text-primary", "fa-user-check text-success", "fa-wand-magic-sparkles text-info"];
+              const icon = icons[idx % icons.length];
+              
+              const parts = rec.split(":");
+              const title = parts[0] || `Directive ${idx + 1}`;
+              const desc = parts[1] || rec;
+              
+              return `
+                <div class="accordion-item glass-card mb-3 p-0" style="overflow: hidden;">
+                  <h2 class="accordion-header" id="${headingId}">
+                    <button class="accordion-button collapsed py-3 px-4 text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#${targetId}" aria-expanded="false" aria-controls="${targetId}" style="background: transparent; color: inherit; box-shadow: none; font-weight: 600;">
+                      <i class="fa-solid ${icon} me-3"></i>Action ${idx + 1}: ${title}
+                    </button>
+                  </h2>
+                  <div id="${targetId}" class="accordion-collapse collapse" aria-labelledby="${headingId}" data-bs-parent="#ai-actions-accordion">
+                    <div class="accordion-body px-4 pb-4 pt-0 text-secondary" style="font-size: 0.9rem;">
+                      <p><strong>Recommendation Action Item:</strong></p>
+                      <p>${desc}</p>
+                      <button class="btn btn-sm btn-action mt-2" onclick="dismissAction('Action ${idx + 1}')">Acknowledge Action</button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+        // Render ML model feature importance
+        if (payload.importance) {
+          const body = document.getElementById("ml-importance-body");
+          if (body) {
+            body.innerHTML = payload.importance.map(imp => `
+              <tr>
+                <td><strong>${imp.Variable}</strong></td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="progress w-75" style="height: 6px; background-color: var(--bg-app);">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: ${Math.min(imp.Importance * 1.5, 100)}%;"></div>
+                    </div>
+                    <span>${imp.Importance.toFixed(1)}</span>
+                  </div>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        // Rebuild charts
+        rebuildCharts();
+      });
+
+      Shiny.addCustomMessageHandler('demand_prediction_result', function(payload) {
+        console.log("Demand prediction received:", payload);
+        $('#query_result_box').removeClass('d-none');
+        $('#query_result_text').text(payload.result);
+      });
+    }
+
+    // EXPORT HANDLERS CONNECTED TO R BACKEND
+    function handleExcelExport(e) {
+      if (shinyConnected) {
+        e.preventDefault();
+        const downloadUrl = `session/${Shiny.shinyapp.config.sessionId}/download/btn_download_report?export_format=excel&export_period=monthly`;
+        window.open(downloadUrl, "_blank");
+        showToast(`<i class="fa-solid fa-file-excel text-success"></i> Generating Excel Spreadsheet on R server...`);
+      } else {
+        exportExcel();
+      }
+    }
+
+    function handlePDFExport(e) {
+      if (shinyConnected) {
+        e.preventDefault();
+        const downloadUrl = `session/${Shiny.shinyapp.config.sessionId}/download/btn_download_report?export_format=pdf&export_period=monthly`;
+        window.open(downloadUrl, "_blank");
+        showToast(`<i class="fa-solid fa-file-pdf text-info"></i> Compiling PDF report on R server...`);
+      } else {
+        exportPDF();
+      }
+    }
+
+    // THEME HANDLING
+    function initTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      state.theme = savedTheme || (systemPrefersDark ? "dark" : "light");
+      applyThemeStyles();
+
+      document.getElementById("theme-toggle").addEventListener("click", () => {
+        state.theme = state.theme === "dark" ? "light" : "dark";
+        localStorage.setItem("theme", state.theme);
+        applyThemeStyles();
+        showToast(`Theme switched to ${state.theme} mode.`);
+        rebuildCharts(); // Redraw gridlines/colors
+      });
+
+      // Listen to OS scheme changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (!localStorage.getItem("theme")) {
+          state.theme = e.matches ? "dark" : "light";
+          applyThemeStyles();
+          rebuildCharts();
+        }
+      });
+    }
+
+    function applyThemeStyles() {
+      document.documentElement.setAttribute("data-theme", state.theme);
+      const toggleIcon = document.querySelector("#theme-toggle i");
+      if (state.theme === "dark") {
+        toggleIcon.className = "fa-solid fa-sun";
+      } else {
+        toggleIcon.className = "fa-solid fa-moon";
+      }
+    }
+
+    // pseudo-random datasets creation
+    function generateDatabase() {
+      const rng = new SeededRandom(42); // Reproducible seed
+      const data = [];
+      const quantityWeights = [0.4, 0.3, 0.15, 0.1, 0.05]; // probabilities for quantities 1 to 5
+      
+      // Date pool parameters
+      const startDate = new Date("2025-01-01").getTime();
+      const endDate = new Date("2025-12-31").getTime();
+
+      for (let i = 1; i <= 150; i++) {
+        const orderId = `EC-${1000 + i}`;
+        
+        // Random date
+        const randTime = rng.nextRange(startDate, endDate);
+        const orderDateObj = new Date(randTime);
+        const orderDateStr = orderDateObj.toISOString().slice(0, 10);
+
+        // Indices
+        const prod = rng.nextElement(PRODUCTS);
+        const cust = rng.nextElement(CUSTOMERS);
+        const loc = rng.nextElement(LOCATIONS);
+        const qty = rng.nextIndexWeighted(quantityWeights) + 1;
+        const sales = qty * prod.price;
+
+        // Profit distribution margins
+        let margin = 0;
+        if (prod.category === "Electronics") {
+          margin = rng.nextRange(0.12, 0.35);
+        } else if (prod.category === "Furniture") {
+          margin = rng.nextRange(-0.15, 0.25);
+        } else if (prod.category === "Clothing") {
+          margin = rng.nextRange(0.25, 0.55);
+        } else { // Office supplies
+          margin = rng.nextRange(0.35, 0.65);
+        }
+        let profit = Math.round(sales * margin * 100) / 100;
+
+        data.push({
+          Order_ID: orderId,
+          Order_Date: orderDateStr,
+          Customer_ID: cust.id,
+          Customer_Name: cust.name,
+          Product: prod.product,
+          Category: prod.category,
+          Quantity: qty,
+          Price: prod.price,
+          Sales: sales,
+          Profit: profit,
+          City: loc.city,
+          State: loc.state,
+          Region: loc.region
+        });
+      }
+
+      // INJECT ANOMALIES (To mirror generate_data.R and prove JS data cleaning)
+      // 1. Missing profits (5 items)
+      const anomalyRng = new SeededRandom(100);
+      const profitAnomIdxs = [];
+      while (profitAnomIdxs.length < 5) {
+        const val = Math.floor(anomalyRng.nextRange(0, 150));
+        if (!profitAnomIdxs.includes(val)) profitAnomIdxs.push(val);
+      }
+      profitAnomIdxs.forEach(idx => {
+        data[idx].Profit = null; // NA profit
+      });
+
+      // 2. Missing customer names (3 items)
+      const custAnomIdxs = [];
+      while (custAnomIdxs.length < 3) {
+        const val = Math.floor(anomalyRng.nextRange(0, 150));
+        if (!custAnomIdxs.includes(val) && !profitAnomIdxs.includes(val)) custAnomIdxs.push(val);
+      }
+      custAnomIdxs.forEach(idx => {
+        data[idx].Customer_Name = null; // NA customer name
+      });
+
+      // 3. Missing cities (2 items)
+      const cityAnomIdxs = [];
+      while (cityAnomIdxs.length < 2) {
+        const val = Math.floor(anomalyRng.nextRange(0, 150));
+        if (!cityAnomIdxs.includes(val) && !profitAnomIdxs.includes(val) && !custAnomIdxs.includes(val)) cityAnomIdxs.push(val);
+      }
+      cityAnomIdxs.forEach(idx => {
+        data[idx].City = ""; // missing city
+      });
+
+      state.rawData = data;
+    }
+
+    // DATA CLEANING PIPELINE
+    function cleanseData() {
+      const data = JSON.parse(JSON.stringify(state.rawData)); // clone deep
+      const logs = [];
+      let logId = 1;
+
+      data.forEach((row, idx) => {
+        // Issue 1: Missing Profit (Impute average margin per category)
+        if (row.Profit === null || row.Profit === undefined || isNaN(row.Profit)) {
+          let avgMargin = 0.235; // Electronics
+          if (row.Category === "Furniture") avgMargin = 0.05;
+          else if (row.Category === "Clothing") avgMargin = 0.40;
+          else if (row.Category === "Office Supplies") avgMargin = 0.50;
+
+          row.Profit = Math.round(row.Sales * avgMargin * 100) / 100;
+          
+          logs.push({
+            Audit_ID: `AUD-${1000 + logId++}`,
+            Order_ID: row.Order_ID,
+            Issue: "Missing Profit (NA value detected)",
+            Action: `Imputed profit (₹${row.Profit}) using ${Math.round(avgMargin*100)}% average margin`,
+            Time: "18:40:13",
+            Status: "Resolved"
+          });
+        }
+
+        // Issue 2: Missing Customer Name (Map by ID or set generic)
+        if (row.Customer_Name === null || row.Customer_Name === undefined || row.Customer_Name === "") {
+          const match = CUSTOMERS.find(c => c.id === row.Customer_ID);
+          row.Customer_Name = match ? match.name : "Valued Corporate Partner";
+          
+          logs.push({
+            Audit_ID: `AUD-${1000 + logId++}`,
+            Order_ID: row.Order_ID,
+            Issue: "Missing Client Identity",
+            Action: `Mapped ID '${row.Customer_ID}' to matching database record '${row.Customer_Name}'`,
+            Time: "18:40:13",
+            Status: "Resolved"
+          });
+        }
+
+        // Issue 3: Missing City (Impute from State or fallback)
+        if (row.City === "") {
+          // Find standard city for state
+          const match = LOCATIONS.find(l => l.state === row.State);
+          row.City = match ? match.city : "Online Headquarters";
+          
+          logs.push({
+            Audit_ID: `AUD-${1000 + logId++}`,
+            Order_ID: row.Order_ID,
+            Issue: "Missing City Location",
+            Action: `Resolved geographic scope to '${row.City}' from State context`,
+            Time: "18:40:13",
+            Status: "Resolved"
+          });
+        }
+      });
+
+      state.cleanedData = data;
+      state.auditLogs = logs;
+    }
+
+    // REAL-TIME STREAM SIMULATION
+    function initSimulationStream() {
+      // Stream updates every 15 seconds to simulate incoming transactional streams
+      setInterval(() => {
+        if (!document.getElementById("switch-real-time-sim").checked) return;
+
+        const rng = new SeededRandom(Date.now());
+        const prod = rng.nextElement(PRODUCTS);
+        const cust = rng.nextElement(CUSTOMERS);
+        const loc = rng.nextElement(LOCATIONS);
+        const qty = rng.nextIndexWeighted([0.5, 0.3, 0.15, 0.05]) + 1;
+        const sales = qty * prod.price;
+        const margin = prod.category === "Electronics" ? 0.25 : prod.category === "Furniture" ? 0.08 : 0.45;
+        const profit = Math.round(sales * margin * 100) / 100;
+        
+        const newOrder = {
+          Order_ID: `EC-${1000 + state.cleanedData.length + 1}`,
+          Order_Date: new Date().toISOString().slice(0, 10),
+          Customer_ID: cust.id,
+          Customer_Name: cust.name,
+          Product: prod.product,
+          Category: prod.category,
+          Quantity: qty,
+          Price: prod.price,
+          Sales: sales,
+          Profit: profit,
+          City: loc.city,
+          State: loc.state,
+          Region: loc.region
+        };
+
+        // Prepend to cleaned data
+        state.cleanedData.unshift(newOrder);
+
+        // Sound alert
+        if (document.getElementById("switch-sound").checked) {
+          playAudioBeep();
+        }
+
+        // Notification toast
+        showToast(`<i class="fa-solid fa-circle-check text-success"></i> Real-time Order Processed: <strong>${newOrder.Order_ID}</strong> (${formatRupee(sales)})`);
+        addSystemNotification("Incoming Order", `Processed transaction ${newOrder.Order_ID} for ${formatRupee(sales)} by ${cust.name}.`, "success");
+        
+        applyFilters();
+      }, 25000);
+    }
+
+    // Audio simulator
+    function playAudioBeep() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.12);
+      } catch (e) {
+        // Audio blocker bypassed silently
+      }
+    }
+
+    // TOAST SYSTEM
+    function showToast(message) {
+      const container = document.getElementById("toast-bin");
+      const toast = document.createElement("div");
+      toast.className = "custom-toast";
+      toast.innerHTML = `
+        <div style="flex:1; font-size: 0.85rem; color: var(--text-primary);">${message}</div>
+        <button onclick="this.parentElement.remove()" style="background:transparent; border:none; color: var(--text-muted); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      `;
+      container.appendChild(toast);
+      
+      // Auto dismiss
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => toast.remove(), 400);
+      }, 5000);
+    }
+
+    // SYSTEM NOTIFICATIONS LIST
+    function addSystemNotification(title, msg, type) {
+      const icon = type === 'success' ? 'fa-cart-shopping text-success' : type === 'warning' ? 'fa-shield-virus text-warning' : 'fa-info-circle text-info';
+      state.notifications.unshift({
+        title,
+        msg,
+        icon,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      renderNotifications();
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById("notification-list");
+      const badge = document.querySelector(".nav-icon-btn .badge-pill");
+      
+      if (state.notifications.length === 0) {
+        badge.style.display = 'none';
+        list.innerHTML = `<li class="text-center py-4 text-muted small">No unread alerts</li>`;
+        return;
+      }
+      
+      badge.style.display = 'block';
+      list.innerHTML = state.notifications.map(n => `
+        <div class="p-2 mb-1 border-bottom border-color" style="font-size: 0.8rem;">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-600 text-primary"><i class="fa-solid ${n.icon} me-2"></i>${n.title}</span>
+            <small class="text-muted">${n.time}</small>
+          </div>
+          <p class="mb-0 text-secondary" style="font-size: 0.75rem;">${n.msg}</p>
+        </div>
+      `).join('');
+    }
+
+    function clearNotifications() {
+      state.notifications = [];
+      renderNotifications();
+      showToast("All system alerts cleared.");
+    }
+
+    // DYNAMIC FILTERING & CALCULATION ENGINE
+    function applyFilters() {
+      let data = [...state.cleanedData];
+
+      // 1. Region Filter
+      if (state.filters.region !== "All") {
+        data = data.filter(r => r.Region === state.filters.region);
+      }
+
+      // 2. Category Filter
+      if (state.filters.category !== "All") {
+        data = data.filter(r => r.Category === state.filters.category);
+      }
+
+      // 3. Date Range Filter
+      if (state.filters.dateRange !== "all") {
+        data = data.filter(r => {
+          const month = parseInt(r.Order_Date.split("-")[1], 10);
+          if (state.filters.dateRange === "q1") return month >= 1 && month <= 3;
+          if (state.filters.dateRange === "q2") return month >= 4 && month <= 6;
+          if (state.filters.dateRange === "q3") return month >= 7 && month <= 9;
+          if (state.filters.dateRange === "q4") return month >= 10 && month <= 12;
+          return true;
+        });
+      }
+
+      state.filteredData = data;
+
+      // Triggers recalculations
+      calculateKPIs();
+      calculateAIRecommendations();
+      renderTables();
+      rebuildCharts();
+    }
+
+    // CALCULATIONS & METRICS BINDING
+    function calculateKPIs() {
+      const data = state.filteredData;
+      
+      const totalRevenue = data.reduce((acc, row) => acc + row.Sales, 0);
+      const totalOrders = data.length;
+      const totalProfit = data.reduce((acc, row) => acc + row.Profit, 0);
+      const uniqueCustomers = new Set(data.map(row => row.Customer_ID)).size;
+      const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+      const grossMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+      // Animate Counters
+      animateCounter("kpi-revenue-val", totalRevenue, true);
+      animateCounter("kpi-orders-val", totalOrders, false);
+      animateCounter("kpi-customers-val", uniqueCustomers, false);
+      animateCounter("kpi-profit-val", totalProfit, true);
+      animateCounter("kpi-aov-val", avgOrderValue, true);
+
+      // KPI Growth percentage pills (simulated variance for filters)
+      const factor = (state.filters.region !== "All" ? 1.2 : 1) * (state.filters.category !== "All" ? 0.9 : 1);
+      const revGrowth = (6.2 * factor).toFixed(1);
+      const orderGrowth = (4.1 * factor).toFixed(1);
+      const custGrowth = (3.5 * factor).toFixed(1);
+      const profitGrowth = (8.4 * factor).toFixed(1);
+
+      updateKPITrend("kpi-revenue-trend", revGrowth);
+      updateKPITrend("kpi-orders-trend", orderGrowth);
+      updateKPITrend("kpi-customers-trend", custGrowth);
+      updateKPITrend("kpi-profit-trend", profitGrowth);
+
+      // Audit calculations (Expanded Sales Tab)
+      document.getElementById("audit-sales-volume").textContent = formatRupee(totalRevenue);
+      const totalUnits = data.reduce((acc, row) => acc + row.Quantity, 0);
+      document.getElementById("audit-total-quantity").textContent = `${totalUnits.toLocaleString('en-IN')} units`;
+      const avgUnitPrice = totalUnits > 0 ? totalRevenue / totalUnits : 0;
+      document.getElementById("audit-avg-unit-price").textContent = formatRupee(avgUnitPrice);
+      const highestOrder = data.length > 0 ? Math.max(...data.map(r => r.Sales)) : 0;
+      document.getElementById("audit-highest-order").textContent = formatRupee(highestOrder);
+
+      // Inventory contribution analytics (Product Performance Tab)
+      const catsSum = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+      data.forEach(r => { catsSum[r.Category] += r.Sales; });
+      const grandSum = Object.values(catsSum).reduce((a, b) => a + b, 0) || 1;
+      
+      document.getElementById("prod-contrib-elec").textContent = `${((catsSum.Electronics / grandSum) * 100).toFixed(1)}%`;
+      document.getElementById("prod-contrib-furn").textContent = `${((catsSum.Furniture / grandSum) * 100).toFixed(1)}%`;
+      document.getElementById("prod-contrib-clot").textContent = `${((catsSum.Clothing / grandSum) * 100).toFixed(1)}%`;
+      document.getElementById("prod-contrib-supp").textContent = `${((catsSum["Office Supplies"] / grandSum) * 100).toFixed(1)}%`;
+
+      // Sparklines rendering
+      renderKPISparklines();
+    }
+
+    // ANIMATE COUNTERS
+    function animateCounter(elementId, targetVal, isCurrency) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+
+      const duration = 1000; // ms
+      const startVal = 0;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Ease-out quad
+        const easeProgress = progress * (2 - progress);
+        const currentVal = startVal + easeProgress * (targetVal - startVal);
+
+        if (isCurrency) {
+          el.textContent = formatRupee(currentVal);
+        } else {
+          el.textContent = Math.floor(currentVal).toLocaleString('en-IN');
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          // Set final exact val
+          if (isCurrency) {
+            el.textContent = formatRupee(targetVal);
+          } else {
+            el.textContent = targetVal.toLocaleString('en-IN');
+          }
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    function updateKPITrend(elementId, growth) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      
+      const isPositive = growth >= 0;
+      el.className = `kpi-trend-pill ${isPositive ? 'up' : 'down'}`;
+      el.innerHTML = `<i class="fa-solid fa-caret-${isPositive ? 'up' : 'down'}"></i>${Math.abs(growth)}%`;
+    }
+
+    // DYNAMIC SVG SPARKLINES
+    function renderKPISparklines() {
+      // Create monthly data chunks depending on filtered set
+      const data = state.filteredData;
+      const monthlyBuckets = Array(12).fill(0);
+      
+      data.forEach(r => {
+        const month = parseInt(r.Order_Date.split("-")[1], 10) - 1;
+        monthlyBuckets[month] += r.Sales;
+      });
+
+      drawSpark("kpi-revenue-spark", monthlyBuckets, "rgba(99, 102, 241, 0.8)");
+      drawSpark("kpi-orders-spark", monthlyBuckets.map(v => v * 0.1), "rgba(59, 130, 246, 0.8)");
+      drawSpark("kpi-customers-spark", monthlyBuckets.map(v => v * 0.05), "rgba(16, 185, 129, 0.8)");
+      drawSpark("kpi-profit-spark", monthlyBuckets.map(v => v * 0.25), "rgba(245, 158, 11, 0.8)");
+    }
+
+    function drawSpark(svgId, dataArray, color) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+
+      const path = svg.querySelector("path");
+      const width = 80;
+      const height = 30;
+      const pad = 2;
+
+      const minVal = Math.min(...dataArray);
+      const maxVal = Math.max(...dataArray) || 1;
+      const range = maxVal - minVal || 1;
+
+      const points = dataArray.map((val, idx) => {
+        const x = (idx / (dataArray.length - 1)) * (width - 2 * pad) + pad;
+        const y = height - ((val - minVal) / range) * (height - 2 * pad) - pad;
+        return `${x},${y}`;
+      });
+
+      path.setAttribute("d", `M ${points.join(" L ")}`);
+      path.setAttribute("stroke", color);
+    }
+
+    // AI ANALYSIS ENGINE
+    function calculateAIRecommendations() {
+      const data = state.filteredData;
+      if (data.length === 0) return;
+
+      // 1. Top Selling Product
+      const prodSum = {};
+      data.forEach(r => {
+        prodSum[r.Product] = (prodSum[r.Product] || 0) + r.Sales;
+      });
+      const topProduct = Object.keys(prodSum).reduce((a, b) => prodSum[a] > prodSum[b] ? a : b, "No Items");
+      document.getElementById("insight-top-product").textContent = `${topProduct} (${formatRupee(prodSum[topProduct] || 0, 0)})`;
+
+      // 2. Worst Performing Category (by margin)
+      const catSales = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+      const catProfits = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+      data.forEach(r => {
+        catSales[r.Category] += r.Sales;
+        catProfits[r.Category] += r.Profit;
+      });
+      
+      let worstCat = "None";
+      let minMargin = Infinity;
+      Object.keys(catSales).forEach(cat => {
+        if (catSales[cat] > 0) {
+          const margin = catProfits[cat] / catSales[cat];
+          if (margin < minMargin) {
+            minMargin = margin;
+            worstCat = cat;
+          }
+        }
+      });
+      const worstMarginPct = minMargin === Infinity ? 0 : (minMargin * 100).toFixed(1);
+      document.getElementById("insight-worst-category").textContent = `${worstCat} (${worstMarginPct}% margin)`;
+
+      // 3. Prediction / Forecast Q3
+      const totalRev = data.reduce((acc, row) => acc + row.Sales, 0);
+      const predQ3 = totalRev * 0.28; // estimate Q3 shares
+      document.getElementById("insight-forecast").textContent = `Est. ${formatRupee(predQ3, 0)} total volume`;
+    }
+
+    function dismissAction(actionId) {
+      showToast(`<i class="fa-solid fa-check text-success"></i> ${actionId} approved. Inventory directives updated.`);
+    }
+
+    // ROUTING & VIEW TAB SWITCHER
+    function initUIListeners() {
+      // Login Form Submission
+      const loginForm = document.getElementById("login-form");
+      if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const username = document.getElementById("login-username").value;
+          const password = document.getElementById("login-password").value;
+          
+          if (username === "admin" && password === "quantum2026") {
+            sessionStorage.setItem("authenticated", "true");
+            document.getElementById("login-overlay").classList.add("authenticated");
+            showToast("<i class='fa-solid fa-circle-check text-success'></i> Authentication Successful. Welcome back, Sales Director.");
+          } else {
+            const loginBox = document.querySelector(".login-box");
+            loginBox.classList.add("shake");
+            setTimeout(() => loginBox.classList.remove("shake"), 400);
+            document.getElementById("login-password").value = "";
+            showToast("<i class='fa-solid fa-triangle-exclamation text-danger'></i> Authentication Failed. Invalid Credentials.");
+          }
+        });
+      }
+
+      // Sidebar Toggle
+      document.getElementById("menu-toggle").addEventListener("click", () => {
+        document.getElementById("sidebar-wrapper").classList.toggle("collapsed");
+        document.getElementById("sidebar-wrapper").classList.toggle("active");
+      });
+
+      // Sidebar Links View Switching
+      document.querySelectorAll("[data-view]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          
+          const viewId = btn.getAttribute("data-view");
+          switchTab(viewId);
+
+          // Close sidebar on mobile
+          if (window.innerWidth < 992) {
+            document.getElementById("sidebar-wrapper").classList.remove("active");
+            document.getElementById("sidebar-wrapper").classList.add("collapsed");
+          }
+        });
+      });
+
+      // Filter Changes
+      document.getElementById("filter-date-range").addEventListener("change", (e) => {
+        state.filters.dateRange = e.target.value;
+        applyFilters();
+        showToast("Filtering date context updated.");
+      });
+
+      document.getElementById("filter-region").addEventListener("change", (e) => {
+        state.filters.region = e.target.value;
+        applyFilters();
+        showToast(`Region context scope: ${state.filters.region}`);
+      });
+
+      document.getElementById("filter-category").addEventListener("change", (e) => {
+        state.filters.category = e.target.value;
+        applyFilters();
+        showToast(`Category scope: ${state.filters.category}`);
+      });
+
+      // Global Search
+      document.getElementById("global-search").addEventListener("input", (e) => {
+        state.searchQuery = e.target.value.toLowerCase();
+        state.tables.orders.page = 1; // reset page
+        renderTables();
+      });
+
+      document.getElementById("audit-table-search").addEventListener("input", (e) => {
+        state.masterSearchQuery = e.target.value.toLowerCase();
+        state.tables.master.page = 1;
+        renderMasterTable();
+      });
+    }
+
+    function switchTab(viewId) {
+      state.activeView = viewId;
+      document.querySelectorAll(".dashboard-section").forEach(sec => sec.classList.remove("active"));
+      
+      // Map sidebar tabs to elements
+      let targetSection = `view-${viewId}`;
+      const el = document.getElementById(targetSection);
+      if (el) el.classList.add("active");
+
+      // sync sidebar styles in case routed via button
+      document.querySelectorAll("[data-view]").forEach(b => {
+        if (b.getAttribute("data-view") === viewId) b.classList.add("active");
+        else b.classList.remove("active");
+      });
+
+      applyFilters(); // refresh calculations
+    }
+
+    // DATA TABLES RENDERING
+    function renderTables() {
+      // 1. Bottom Transaction Switchable Table
+      if (state.activeSubTable === "orders") {
+        renderOrdersTable();
+      } else if (state.activeSubTable === "products") {
+        renderProductsTable();
+      } else if (state.activeSubTable === "customers") {
+        renderCustomersTable();
+      }
+
+      // 2. Full Audit Log Table
+      renderAuditLogTable();
+
+      // 3. Master Dataset Directory
+      renderMasterTable();
+    }
+
+    function switchTableData(type) {
+      state.activeSubTable = type;
+      document.querySelectorAll("[id^='tab-btn-']").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(`tab-btn-${type}`).classList.add("active");
+      renderTables();
+    }
+
+    // TAB 1: RECENT ORDERS
+    function renderOrdersTable() {
+      const headers = document.getElementById("table-headers");
+      const body = document.getElementById("table-body");
+      const info = document.getElementById("table-page-info");
+      
+      headers.innerHTML = `
+        <th onclick="sortSubTable('orders', 'Order_ID')">Order ID</th>
+        <th onclick="sortSubTable('orders', 'Order_Date')">Date</th>
+        <th onclick="sortSubTable('orders', 'Customer_Name')">Client</th>
+        <th onclick="sortSubTable('orders', 'Product')">Product Item</th>
+        <th onclick="sortSubTable('orders', 'Sales')">Sales</th>
+        <th onclick="sortSubTable('orders', 'Profit')">Profit Margin</th>
+      `;
+
+      // Apply sorting and filtering
+      let data = [...state.filteredData];
+      
+      if (state.searchQuery) {
+        data = data.filter(r => 
+          r.Order_ID.toLowerCase().includes(state.searchQuery) ||
+          r.Customer_Name.toLowerCase().includes(state.searchQuery) ||
+          r.Product.toLowerCase().includes(state.searchQuery)
+        );
+      }
+
+      // Sort
+      const col = state.tables.orders.sortCol;
+      const dir = state.tables.orders.sortDir;
+      applyHeaderSortClass("table-headers", col, dir);
+
+      data.sort((a, b) => {
+        let valA = a[col];
+        let valB = b[col];
+        if (typeof valA === 'string') {
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }
+      });
+
+      // Paginate
+      const total = data.length;
+      const size = state.tables.orders.pageSize;
+      const maxPage = Math.ceil(total / size) || 1;
+      if (state.tables.orders.page > maxPage) state.tables.orders.page = maxPage;
+      const page = state.tables.orders.page;
+      
+      const start = (page - 1) * size;
+      const end = Math.min(start + size, total);
+      const paginated = data.slice(start, end);
+
+      body.innerHTML = paginated.map(r => {
+        const profitRatio = r.Sales > 0 ? r.Profit / r.Sales : 0;
+        let badgeType = "profit-mid";
+        if (profitRatio > 0.35) badgeType = "profit-high";
+        else if (profitRatio < 0.1) badgeType = "profit-low";
+
+        return `
+          <tr>
+            <td><strong>${r.Order_ID}</strong></td>
+            <td>${r.Order_Date}</td>
+            <td>${r.Customer_Name}</td>
+            <td>${r.Product}</td>
+            <td>${formatRupee(r.Sales)}</td>
+            <td><span class="status-badge ${badgeType}">${(profitRatio*100).toFixed(1)}%</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      info.textContent = `Showing ${total > 0 ? start + 1 : 0} to ${end} of ${total} entries`;
+      document.getElementById("btn-page-prev").disabled = page === 1;
+      document.getElementById("btn-page-next").disabled = page === maxPage;
+    }
+
+    // TAB 2: TOP PRODUCTS
+    function renderProductsTable() {
+      const headers = document.getElementById("table-headers");
+      const body = document.getElementById("table-body");
+      const info = document.getElementById("table-page-info");
+      
+      headers.innerHTML = `
+        <th onclick="sortSubTable('products', 'Product')">Product Item</th>
+        <th onclick="sortSubTable('products', 'Category')">Category</th>
+        <th onclick="sortSubTable('products', 'Qty')">Units Dispatched</th>
+        <th onclick="sortSubTable('products', 'Sales')">Total Revenue</th>
+        <th onclick="sortSubTable('products', 'Profit')">Net Profit</th>
+        <th>Action</th>
+      `;
+
+      // Aggregate Products
+      const prodMap = {};
+      state.filteredData.forEach(r => {
+        if (!prodMap[r.Product]) {
+          prodMap[r.Product] = { Product: r.Product, Category: r.Category, Qty: 0, Sales: 0, Profit: 0 };
+        }
+        prodMap[r.Product].Qty += r.Quantity;
+        prodMap[r.Product].Sales += r.Sales;
+        prodMap[r.Product].Profit += r.Profit;
+      });
+
+      let aggregated = Object.values(prodMap);
+
+      if (state.searchQuery) {
+        aggregated = aggregated.filter(r => 
+          r.Product.toLowerCase().includes(state.searchQuery) ||
+          r.Category.toLowerCase().includes(state.searchQuery)
+        );
+      }
+
+      // Sort
+      const col = state.tables.products.sortCol;
+      const dir = state.tables.products.sortDir;
+      applyHeaderSortClass("table-headers", col, dir);
+
+      aggregated.sort((a, b) => {
+        let valA = a[col];
+        let valB = b[col];
+        if (typeof valA === 'string') {
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }
+      });
+
+      const total = aggregated.length;
+      const size = state.tables.products.pageSize;
+      const maxPage = Math.ceil(total / size) || 1;
+      if (state.tables.products.page > maxPage) state.tables.products.page = maxPage;
+      const page = state.tables.products.page;
+      
+      const start = (page - 1) * size;
+      const end = Math.min(start + size, total);
+      const paginated = aggregated.slice(start, end);
+
+      body.innerHTML = paginated.map(r => `
+        <tr>
+          <td><strong>${r.Product}</strong></td>
+          <td>${r.Category}</td>
+          <td>${r.Qty} units</td>
+          <td>${formatRupee(r.Sales)}</td>
+          <td>${formatRupee(r.Profit)}</td>
+          <td><button onclick="openProductModal('${r.Product.replace(/'/g, "\\'")}')" class="btn btn-sm btn-outline-primary py-1 px-2 font-weight-bold" style="border-radius: 4px; font-size: 0.75rem;"><i class="fa-solid fa-chart-pie me-1"></i>Analyze</button></td>
+        </tr>
+      `).join('');
+
+      info.textContent = `Showing ${total > 0 ? start + 1 : 0} to ${end} of ${total} entries`;
+      document.getElementById("btn-page-prev").disabled = page === 1;
+      document.getElementById("btn-page-next").disabled = page === maxPage;
+    }
+
+    // TAB 3: TOP CUSTOMERS
+    function renderCustomersTable() {
+      const headers = document.getElementById("table-headers");
+      const body = document.getElementById("table-body");
+      const info = document.getElementById("table-page-info");
+      
+      headers.innerHTML = `
+        <th onclick="sortSubTable('customers', 'Customer_ID')">Client ID</th>
+        <th onclick="sortSubTable('customers', 'Customer_Name')">Client Name</th>
+        <th onclick="sortSubTable('customers', 'TotalOrders')">Total Transactions</th>
+        <th onclick="sortSubTable('customers', 'TotalPurchases')">Total Purchases</th>
+        <th onclick="sortSubTable('customers', 'AvgBasket')">Average Order Size</th>
+      `;
+
+      // Aggregate
+      const custMap = {};
+      state.filteredData.forEach(r => {
+        if (!custMap[r.Customer_ID]) {
+          custMap[r.Customer_ID] = { Customer_ID: r.Customer_ID, Customer_Name: r.Customer_Name, TotalOrders: 0, TotalPurchases: 0 };
+        }
+        custMap[r.Customer_ID].TotalOrders += 1;
+        custMap[r.Customer_ID].TotalPurchases += r.Sales;
+      });
+
+      let aggregated = Object.values(custMap).map(c => ({
+        ...c,
+        AvgBasket: c.TotalOrders > 0 ? c.TotalPurchases / c.TotalOrders : 0
+      }));
+
+      if (state.searchQuery) {
+        aggregated = aggregated.filter(r => 
+          r.Customer_Name.toLowerCase().includes(state.searchQuery) ||
+          r.Customer_ID.toLowerCase().includes(state.searchQuery)
+        );
+      }
+
+      // Sort
+      const col = state.tables.customers.sortCol;
+      const dir = state.tables.customers.sortDir;
+      applyHeaderSortClass("table-headers", col, dir);
+
+      aggregated.sort((a, b) => {
+        let valA = a[col];
+        let valB = b[col];
+        if (typeof valA === 'string') {
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }
+      });
+
+      const total = aggregated.length;
+      const size = state.tables.customers.pageSize;
+      const maxPage = Math.ceil(total / size) || 1;
+      if (state.tables.customers.page > maxPage) state.tables.customers.page = maxPage;
+      const page = state.tables.customers.page;
+      
+      const start = (page - 1) * size;
+      const end = Math.min(start + size, total);
+      const paginated = aggregated.slice(start, end);
+
+      body.innerHTML = paginated.map(r => `
+        <tr>
+          <td><strong>${r.Customer_ID}</strong></td>
+          <td>${r.Customer_Name}</td>
+          <td>${r.TotalOrders} orders</td>
+          <td>${formatRupee(r.TotalPurchases)}</td>
+          <td>${formatRupee(r.AvgBasket)}</td>
+        </tr>
+      `).join('');
+
+      info.textContent = `Showing ${total > 0 ? start + 1 : 0} to ${end} of ${total} entries`;
+      document.getElementById("btn-page-prev").disabled = page === 1;
+      document.getElementById("btn-page-next").disabled = page === maxPage;
+    }
+
+    function sortSubTable(type, colName) {
+      const tbl = state.tables[type];
+      if (tbl.sortCol === colName) {
+        tbl.sortDir = tbl.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        tbl.sortCol = colName;
+        tbl.sortDir = "desc";
+      }
+      tbl.page = 1;
+      renderTables();
+    }
+
+    function changeTablePage(direction) {
+      state.tables[state.activeSubTable].page += direction;
+      renderTables();
+    }
+
+    // AUDIT LOG TABLE RENDERING (Tab: Reports & Data Audit)
+    function renderAuditLogTable() {
+      const body = document.getElementById("data-audit-log-body");
+      if (!body) return;
+
+      body.innerHTML = state.auditLogs.map(log => `
+        <tr>
+          <td><strong>${log.Audit_ID}</strong></td>
+          <td>${log.Order_ID}</td>
+          <td class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>${log.Issue}</td>
+          <td>${log.Action}</td>
+          <td>${log.Time}</td>
+          <td><span class="status-badge profit-high"><i class="fa-solid fa-circle-check me-1"></i>${log.Status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // MASTER DATASET TABLE RENDERING (Tab: Reports & Data Audit)
+    function renderMasterTable() {
+      const body = document.getElementById("master-dataset-body");
+      const info = document.getElementById("master-page-info");
+      if (!body) return;
+
+      let data = [...state.cleanedData];
+
+      if (state.masterSearchQuery) {
+        data = data.filter(r => 
+          r.Order_ID.toLowerCase().includes(state.masterSearchQuery) ||
+          r.Customer_Name.toLowerCase().includes(state.masterSearchQuery) ||
+          r.Product.toLowerCase().includes(state.masterSearchQuery) ||
+          r.Category.toLowerCase().includes(state.masterSearchQuery) ||
+          r.City.toLowerCase().includes(state.masterSearchQuery) ||
+          r.Region.toLowerCase().includes(state.masterSearchQuery)
+        );
+      }
+
+      // Sort master
+      const col = state.tables.master.sortCol;
+      const dir = state.tables.master.sortDir;
+
+      data.sort((a, b) => {
+        let valA = a[col];
+        let valB = b[col];
+        if (typeof valA === 'string') {
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }
+      });
+
+      const total = data.length;
+      const size = state.tables.master.pageSize;
+      const maxPage = Math.ceil(total / size) || 1;
+      if (state.tables.master.page > maxPage) state.tables.master.page = maxPage;
+      const page = state.tables.master.page;
+
+      const start = (page - 1) * size;
+      const end = Math.min(start + size, total);
+      const paginated = data.slice(start, end);
+
+      body.innerHTML = paginated.map(r => `
+        <tr>
+          <td><strong>${r.Order_ID}</strong></td>
+          <td>${r.Order_Date}</td>
+          <td>${r.Customer_Name}</td>
+          <td>${r.Product}</td>
+          <td>${r.Category}</td>
+          <td>${r.Quantity}</td>
+          <td>${formatRupee(r.Price, 0)}</td>
+          <td>${formatRupee(r.Sales)}</td>
+          <td>${formatRupee(r.Profit)}</td>
+          <td>${r.City}, ${r.Region}</td>
+        </tr>
+      `).join('');
+
+      info.textContent = `Showing ${total > 0 ? start + 1 : 0} to ${end} of ${total} entries`;
+      document.getElementById("btn-master-prev").disabled = page === 1;
+      document.getElementById("btn-master-next").disabled = page === maxPage;
+    }
+
+    function changeMasterPage(dir) {
+      state.tables.master.page += dir;
+      renderMasterTable();
+    }
+
+    // Tabular Sort Helper Icon Classes
+    function applyHeaderSortClass(containerId, col, dir) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.querySelectorAll("th").forEach(th => {
+        th.className = "";
+        const onclickAttr = th.getAttribute("onclick");
+        if (onclickAttr && onclickAttr.includes(`'${col}'`)) {
+          th.className = dir === 'asc' ? 'sort-asc' : 'sort-desc';
+        }
+      });
+    }
+
+    // CHART.JS INTEGRATION & REBUILD ENGINE
+    function rebuildCharts() {
+      // Clean previous chart instances to avoid overlap leaks
+      Object.keys(state.chartInstances).forEach(key => {
+        if (state.chartInstances[key]) state.chartInstances[key].destroy();
+      });
+
+      const isDark = state.theme === "dark";
+      const gridColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)";
+      const textColor = isDark ? "#9ca3af" : "#4b5563";
+
+      // Configure Chart defaults
+      Chart.defaults.color = textColor;
+      Chart.defaults.font.family = "'Poppins', sans-serif";
+      
+      const filtered = state.filteredData;
+
+      // Group monthly buckets for trend
+      const monthlySales = Array(12).fill(0);
+      const monthlyProfits = Array(12).fill(0);
+      filtered.forEach(r => {
+        const m = parseInt(r.Order_Date.split("-")[1], 10) - 1;
+        monthlySales[m] += r.Sales;
+        monthlyProfits[m] += r.Profit;
+      });
+
+      const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      // 1. Chart: OVERVIEW - Monthly Sales & Profit Trend Line
+      const ctxTrend = document.getElementById("chart-sales-trend");
+      if (ctxTrend) {
+        // Build gradients
+        const gradientSales = ctxTrend.getContext("2d").createLinearGradient(0, 0, 0, 300);
+        gradientSales.addColorStop(0, "rgba(99, 102, 241, 0.4)");
+        gradientSales.addColorStop(1, "rgba(99, 102, 241, 0.0)");
+
+        const gradientProfits = ctxTrend.getContext("2d").createLinearGradient(0, 0, 0, 300);
+        gradientProfits.addColorStop(0, "rgba(16, 185, 129, 0.4)");
+        gradientProfits.addColorStop(1, "rgba(16, 185, 129, 0.0)");
+
+        state.chartInstances.trend = new Chart(ctxTrend, {
+          type: "line",
+          data: {
+            labels: monthLabels,
+            datasets: [
+              {
+                label: "Gross Sales",
+                data: monthlySales,
+                borderColor: "#6366f1",
+                backgroundColor: gradientSales,
+                fill: true,
+                tension: 0.45,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 7
+              },
+              {
+                label: "Net Profit",
+                data: monthlyProfits,
+                borderColor: "#10b981",
+                backgroundColor: gradientProfits,
+                fill: true,
+                tension: 0.45,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 7
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "top" } },
+            scales: {
+              x: { grid: { color: gridColor } },
+              y: { grid: { color: gridColor }, ticks: { callback: v => `₹${v.toLocaleString('en-IN')}` } }
+            }
+          }
+        });
+      }
+
+      // 2. Chart: OVERVIEW - Category Distribution Doughnut
+      const ctxCat = document.getElementById("chart-category-doughnut");
+      if (ctxCat) {
+        const catMap = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+        filtered.forEach(r => { catMap[r.Category] += r.Sales; });
+
+        state.chartInstances.category = new Chart(ctxCat, {
+          type: "doughnut",
+          data: {
+            labels: Object.keys(catMap),
+            datasets: [{
+              data: Object.values(catMap),
+              backgroundColor: ["#6366f1", "#f59e0b", "#10b981", "#3b82f6"],
+              borderWidth: isDark ? 2 : 1,
+              borderColor: isDark ? "#111827" : "#fff"
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "right" } }
+          }
+        });
+      }
+
+      // 3. Chart: OVERVIEW - Regional Sales Bar
+      const ctxReg = document.getElementById("chart-regional-bar");
+      if (ctxReg) {
+        const regMap = { East: 0, West: 0, Central: 0, South: 0 };
+        filtered.forEach(r => { regMap[r.Region] += r.Sales; });
+
+        state.chartInstances.regional = new Chart(ctxReg, {
+          type: "bar",
+          data: {
+            labels: Object.keys(regMap),
+            datasets: [{
+              label: "Territorial Volume (₹)",
+              data: Object.values(regMap),
+              backgroundColor: "rgba(99, 102, 241, 0.85)",
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: "transparent" } },
+              y: { grid: { color: gridColor }, ticks: { callback: v => `₹${v.toLocaleString('en-IN')}` } }
+            }
+          }
+        });
+      }
+
+      // 4. TAB: SALES - Expanded Sales trend Line
+      const ctxSalesExp = document.getElementById("chart-sales-expanded");
+      if (ctxSalesExp) {
+        state.chartInstances.salesExp = new Chart(ctxSalesExp, {
+          type: "line",
+          data: {
+            labels: monthLabels,
+            datasets: [{
+              label: "Gross Sales (₹)",
+              data: monthlySales,
+              borderColor: "#3b82f6",
+              backgroundColor: "transparent",
+              tension: 0.1,
+              borderWidth: 4,
+              pointStyle: 'rectRot',
+              pointRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor } },
+              y: { grid: { color: gridColor } }
+            }
+          }
+        });
+      }
+
+      // 5. TAB: SALES - Scatter Correlation Quantity vs Price
+      const ctxSalesScat = document.getElementById("chart-sales-scatter");
+      if (ctxSalesScat) {
+        const scatterPoints = filtered.map(r => ({ x: r.Price, y: r.Quantity }));
+        state.chartInstances.salesScatter = new Chart(ctxSalesScat, {
+          type: "scatter",
+          data: {
+            datasets: [{
+              label: "Transactions (Price vs Quantity)",
+              data: scatterPoints,
+              backgroundColor: "rgba(16, 185, 129, 0.7)",
+              pointRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { title: { display: true, text: "Unit Price (₹)" }, grid: { color: gridColor } },
+              y: { title: { display: true, text: "Quantity Ordered" }, grid: { color: gridColor } }
+            }
+          }
+        });
+      }
+
+      // 6. TAB: REVENUE - Net Margin Lines
+      const ctxRevTr = document.getElementById("chart-revenue-trends");
+      if (ctxRevTr) {
+        const margins = monthlySales.map((s, idx) => s > 0 ? (monthlyProfits[idx] / s) * 100 : 0);
+        state.chartInstances.revenueTrends = new Chart(ctxRevTr, {
+          type: "line",
+          data: {
+            labels: monthLabels,
+            datasets: [{
+              label: "Average Margin (%)",
+              data: margins,
+              borderColor: "#f59e0b",
+              backgroundColor: "rgba(245, 158, 11, 0.1)",
+              fill: true,
+              borderWidth: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor } },
+              y: { ticks: { callback: v => `${v}%` }, grid: { color: gridColor } }
+            }
+          }
+        });
+      }
+
+      // 7. TAB: REVENUE - Category Margin Polar
+      const ctxPolar = document.getElementById("chart-category-polar");
+      if (ctxPolar) {
+        const catSales = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+        const catProfits = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+        filtered.forEach(r => {
+          catSales[r.Category] += r.Sales;
+          catProfits[r.Category] += r.Profit;
+        });
+
+        const marginData = Object.keys(catSales).map(cat => catSales[cat] > 0 ? (catProfits[cat] / catSales[cat]) * 100 : 0);
+
+        state.chartInstances.categoryPolar = new Chart(ctxPolar, {
+          type: "polarArea",
+          data: {
+            labels: Object.keys(catSales),
+            datasets: [{
+              data: marginData,
+              backgroundColor: [
+                "rgba(99, 102, 241, 0.7)",
+                "rgba(245, 158, 11, 0.7)",
+                "rgba(16, 185, 129, 0.7)",
+                "rgba(59, 130, 246, 0.7)"
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "bottom" } }
+          }
+        });
+      }
+
+      // 8. TAB: PRODUCTS - Top 10 Product Bar
+      const ctxProdBar = document.getElementById("chart-product-perf-bar");
+      if (ctxProdBar) {
+        const prodSum = {};
+        filtered.forEach(r => {
+          prodSum[r.Product] = (prodSum[r.Product] || 0) + r.Sales;
+        });
+
+        const sortedProds = Object.keys(prodSum).sort((a,b) => prodSum[b] - prodSum[a]).slice(0, 10);
+        const topSales = sortedProds.map(p => prodSum[p]);
+
+        state.chartInstances.productPerf = new Chart(ctxProdBar, {
+          type: "bar",
+          data: {
+            labels: sortedProds,
+            datasets: [{
+              label: "Sales Revenue (₹)",
+              data: topSales,
+              backgroundColor: "rgba(59, 130, 246, 0.85)",
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            scales: {
+              x: { grid: { color: gridColor } },
+              y: { grid: { color: "transparent" } }
+            }
+          }
+        });
+      }
+
+      // 9. TAB: CUSTOMERS - Segmentation Radar
+      const ctxRadar = document.getElementById("chart-customer-radar");
+      if (ctxRadar) {
+        // Group by value metrics
+        const radarMap = { Electronics: 0, Furniture: 0, Clothing: 0, "Office Supplies": 0 };
+        filtered.forEach(r => { radarMap[r.Category] += r.Quantity; });
+
+        state.chartInstances.customerRadar = new Chart(ctxRadar, {
+          type: "radar",
+          data: {
+            labels: Object.keys(radarMap),
+            datasets: [{
+              label: "Product Quantity Dispatched",
+              data: Object.values(radarMap),
+              borderColor: "#10b981",
+              backgroundColor: "rgba(16, 185, 129, 0.2)",
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                angleLines: { color: gridColor },
+                grid: { color: gridColor },
+                pointLabels: { color: textColor }
+              }
+            }
+          }
+        });
+      }
+
+      // 10. TAB: REGIONAL - Regional Sales Share Pie
+      const ctxRegDoughnut = document.getElementById("chart-regional-doughnut");
+      if (ctxRegDoughnut) {
+        const regMap = { East: 0, West: 0, Central: 0, South: 0 };
+        filtered.forEach(r => { regMap[r.Region] += r.Sales; });
+
+        state.chartInstances.regionalDoughnut = new Chart(ctxRegDoughnut, {
+          type: "pie",
+          data: {
+            labels: Object.keys(regMap),
+            datasets: [{
+              data: Object.values(regMap),
+              backgroundColor: ["#3b82f6", "#10b981", "#6366f1", "#f59e0b"]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+      }
+
+      // 11. TAB: FORECASTING - ARIMA & LR Line Graphs (R connected)
+      const ctxForecast = document.getElementById("chart-forecast-model");
+      if (ctxForecast) {
+        if (state.forecastData) {
+          const histData = state.forecastData.historical.map(h => h.Sales);
+          const histLabels = state.forecastData.historical.map(h => `${h.Month_Name} ${h.Year}`);
+          
+          const fcLabels = state.forecastData.forecast.map(f => `${f.Month_Name} ${f.Year} (F)`);
+          const allLabels = [...histLabels, ...fcLabels];
+          
+          const histPoints = [...histData, ...Array(state.forecastData.forecast.length).fill(null)];
+          const arimaPoints = [...Array(histData.length - 1).fill(null), histData[histData.length - 1], ...state.forecastData.forecast.map(f => f.Sales_ARIMA)];
+          const lrPoints = [...Array(histData.length - 1).fill(null), histData[histData.length - 1], ...state.forecastData.forecast.map(f => f.Sales_LR)];
+
+          state.chartInstances.forecastModel = new Chart(ctxForecast, {
+            type: "line",
+            data: {
+              labels: allLabels,
+              datasets: [
+                {
+                  label: "Historical Sales",
+                  data: histPoints,
+                  borderColor: "#6366f1",
+                  borderWidth: 3,
+                  tension: 0.35,
+                  fill: false
+                },
+                {
+                  label: "ARIMA Projections",
+                  data: arimaPoints,
+                  borderColor: "#10b981",
+                  borderWidth: 3,
+                  borderDash: [6, 6],
+                  tension: 0.35,
+                  fill: false,
+                  pointBackgroundColor: "#10b981"
+                },
+                {
+                  label: "Linear Trend Projections",
+                  data: lrPoints,
+                  borderColor: "#f59e0b",
+                  borderWidth: 2,
+                  borderDash: [2, 4],
+                  tension: 0.35,
+                  fill: false,
+                  pointBackgroundColor: "#f59e0b"
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { grid: { color: gridColor } },
+                y: { grid: { color: gridColor }, ticks: { callback: v => `₹${v.toLocaleString('en-IN')}` } }
+              }
+            }
+          });
+        } else {
+          // Standalone fallback
+          const historical = [...monthlySales];
+          const forecast = [
+            { month: "Jan (F)", sales: 850750 },
+            { month: "Feb (F)", sales: 921300 },
+            { month: "Mar (F)", sales: 788500 }
+          ];
+
+          const allLabels = [...monthLabels, ...forecast.map(f => f.month)];
+          const histData = [...historical, ...Array(3).fill(null)];
+          const foreData = [...Array(11).fill(null), historical[11], ...forecast.map(f => f.sales)];
+
+          state.chartInstances.forecastModel = new Chart(ctxForecast, {
+            type: "line",
+            data: {
+              labels: allLabels,
+              datasets: [
+                {
+                  label: "Historical Sales (₹)",
+                  data: histData,
+                  borderColor: "#6366f1",
+                  borderWidth: 3,
+                  tension: 0.35,
+                  fill: false
+                },
+                {
+                  label: "ARIMA Forecast Model",
+                  data: foreData,
+                  borderColor: "#10b981",
+                  borderWidth: 3,
+                  borderDash: [6, 6],
+                  tension: 0.35,
+                  fill: false,
+                  pointBackgroundColor: "#10b981"
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { grid: { color: gridColor } },
+                y: { grid: { color: gridColor }, ticks: { callback: v => formatRupee(v, 0) } }
+              }
+            }
+          });
+        }
+      }
+
+      // 12. TAB: CUSTOMERS - K-Means Scatter Plot (R connected)
+      const ctxClusters = document.getElementById("chart-customer-clusters");
+      if (ctxClusters && state.clusterData) {
+        const segments = {};
+        state.clusterData.forEach(item => {
+          if (!segments[item.Segment]) {
+            segments[item.Segment] = [];
+          }
+          segments[item.Segment].push({
+            x: item.Recency,
+            y: item.Monetary,
+            r: Math.min(item.Frequency * 2 + 4, 15),
+            name: item.Customer_Name,
+            id: item.Customer_ID,
+            freq: item.Frequency
+          });
+        });
+        
+        const colors = {
+          "Champions": "#10b981",
+          "Loyal Customers": "#6366f1",
+          "At Risk": "#ef4444"
+        };
+
+        const datasets = Object.keys(segments).map(segName => ({
+          label: segName,
+          data: segments[segName],
+          backgroundColor: colors[segName] || "#3b82f6",
+          hoverRadius: 8
+        }));
+
+        state.chartInstances.customerClusters = new Chart(ctxClusters, {
+          type: "bubble",
+          data: {
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true, position: "top" },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    const raw = ctx.raw;
+                    return `${raw.name} (${raw.id}) - Orders: ${raw.freq}, Recency: ${raw.x} days, Monetary: ₹${raw.y.toLocaleString('en-IN')}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: "Recency (Days since Last Order)", color: textColor },
+                grid: { color: gridColor }
+              },
+              y: {
+                title: { display: true, text: "Monetary Value (Total Spend ₹)", color: textColor },
+                grid: { color: gridColor },
+                ticks: { callback: v => `₹${v.toLocaleString('en-IN')}` }
+              }
+            }
+          }
+        });
+      }
+
+      // Render non-chart lists related to tabs
+      renderTabHelpers();
+    }
+
+    // UTILITIES & VIEW RENDERS FOR CORRESPONDING TABS
+    function renderTabHelpers() {
+      // 1. Regional breakdowns
+      const regContainer = document.getElementById("regional-breakdown-container");
+      if (regContainer) {
+        const regSales = { East: 0, West: 0, Central: 0, South: 0 };
+        const regProfit = { East: 0, West: 0, Central: 0, South: 0 };
+        state.filteredData.forEach(r => {
+          regSales[r.Region] += r.Sales;
+          regProfit[r.Region] += r.Profit;
+        });
+
+        regContainer.innerHTML = Object.keys(regSales).map(reg => {
+          const ratio = regSales[reg] > 0 ? (regProfit[reg] / regSales[reg]) * 100 : 0;
+          return `
+            <div class="mb-3 p-3 rounded border border-color" style="background-color: rgba(var(--primary-rgb), 0.015);">
+              <div class="d-flex justify-content-between mb-1">
+                <strong>${reg} Region</strong>
+                <span class="text-primary">${formatRupee(regSales[reg], 0)}</span>
+              </div>
+              <div class="progress" style="height: 6px; background-color: var(--bg-app);">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: ${Math.min(ratio * 2, 100)}%;" aria-valuenow="${ratio.toFixed(1)}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <div class="d-flex justify-content-between mt-1 text-muted" style="font-size: 0.7rem;">
+                <span>Profit: ${formatRupee(regProfit[reg], 0)}</span>
+                <span>Margin: ${ratio.toFixed(1)}%</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Products Tab performance catalog list
+      const prodBody = document.getElementById("product-directory-body");
+      if (prodBody) {
+        const prodSummaryMap = {};
+        state.filteredData.forEach(r => {
+          if (!prodSummaryMap[r.Product]) {
+            prodSummaryMap[r.Product] = { Product: r.Product, Category: r.Category, UnitPrice: r.Price, Qty: 0, Sales: 0, Profit: 0 };
+          }
+          prodSummaryMap[r.Product].Qty += r.Quantity;
+          prodSummaryMap[r.Product].Sales += r.Sales;
+          prodSummaryMap[r.Product].Profit += r.Profit;
+        });
+
+        prodBody.innerHTML = Object.values(prodSummaryMap).map(row => {
+          const margin = row.Sales > 0 ? (row.Profit / row.Sales) * 100 : 0;
+          return `
+            <tr>
+              <td><strong>${row.Product}</strong></td>
+              <td>${row.Category}</td>
+              <td>${formatRupee(row.UnitPrice, 0)}</td>
+              <td>${row.Qty} units</td>
+              <td>${formatRupee(row.Sales)}</td>
+              <td><span class="status-badge ${margin >= 30 ? 'profit-high' : margin >= 15 ? 'profit-mid' : 'profit-low'}">${margin.toFixed(1)}%</span></td>
+              <td><button onclick="openProductModal('${row.Product.replace(/'/g, "\\'")}')" class="btn btn-sm btn-outline-primary py-1 px-2 font-weight-bold" style="border-radius: 4px; font-size: 0.75rem;"><i class="fa-solid fa-chart-pie me-1"></i>Details</button></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 3. Customers Tab Top contribution list
+      const custBody = document.getElementById("top-customers-body");
+      if (custBody) {
+        const custSummaryMap = {};
+        state.filteredData.forEach(r => {
+          if (!custSummaryMap[r.Customer_ID]) {
+            custSummaryMap[r.Customer_ID] = { Customer_ID: r.Customer_ID, Customer_Name: r.Customer_Name, Orders: 0, Sales: 0 };
+          }
+          custSummaryMap[r.Customer_ID].Orders += 1;
+          custSummaryMap[r.Customer_ID].Sales += r.Sales;
+        });
+
+        const sorted = Object.values(custSummaryMap).sort((a,b) => b.Sales - a.Sales).slice(0, 15);
+
+        custBody.innerHTML = sorted.map(row => `
+          <tr>
+            <td><strong>${row.Customer_ID}</strong></td>
+            <td>${row.Customer_Name}</td>
+            <td>${row.Orders} transactions</td>
+            <td>${formatRupee(row.Sales)}</td>
+            <td>${formatRupee(row.Sales / row.Orders)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // LIVE SYSTEM CLOCK
+    function initLiveClock() {
+      const el = document.getElementById("live-clock");
+      if (!el) return;
+
+      function updateClock() {
+        // Set standard local display: June 14, 2026 18:40
+        const now = new Date();
+        const dateStr = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        el.textContent = `${dateStr} @ ${timeStr}`;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    }
+
+    // RESET DATABASE UTILITY
+    function resetDatabase() {
+      if (confirm("Reset current transaction stream modifications?")) {
+        generateDatabase();
+        cleanseData();
+        applyFilters();
+        showToast("Database seed state reset complete.");
+      }
+    }
+
+    // EXCEL EXPORT (Downloads CSV file)
+    function exportExcel() {
+      const data = state.filteredData;
+      if (data.length === 0) {
+        showToast(`<i class="fa-solid fa-triangle-exclamation text-danger"></i> No transactions found in current filter view.`);
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      // Headers
+      const headers = Object.keys(data[0]);
+      csvContent += headers.join(",") + "\r\n";
+
+      // Rows
+      data.forEach(row => {
+        const line = headers.map(header => {
+          let val = row[header];
+          if (typeof val === 'string' && val.includes(',')) {
+            val = `"${val}"`; // wrap commas
+          }
+          return val;
+        });
+        csvContent += line.join(",") + "\r\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      
+      const regionLabel = state.filters.region.replace(' ', '_');
+      const catLabel = state.filters.category.replace(' ', '_');
+      const dateLabel = state.filters.dateRange;
+      
+      link.setAttribute("download", `QuantumSales_Report_R_${regionLabel}_${catLabel}_${dateLabel}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast(`<i class="fa-solid fa-file-excel text-success"></i> Exported CSV dataset (${data.length} records) to download queue.`);
+    }
+
+    // PDF EXPORT (Triggers window.print with CSS overrides)
+    function exportPDF() {
+      showToast(`<i class="fa-solid fa-file-pdf text-info"></i> Preparing PDF layout...`);
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    }
+
+    // PRODUCT DRILLDOWN MODAL
+    function openProductModal(productName) {
+      const prodObj = PRODUCTS.find(p => p.product === productName);
+      const records = state.filteredData.filter(r => r.Product === productName);
+      
+      let totalUnits = 0;
+      let grossSales = 0;
+      let netProfit = 0;
+      let totalLoss = 0;
+      let profitableCount = 0;
+      let lossCount = 0;
+
+      records.forEach(r => {
+        totalUnits += r.Quantity;
+        grossSales += r.Sales;
+        netProfit += r.Profit;
+        if (r.Profit < 0) {
+          totalLoss += Math.abs(r.Profit);
+          lossCount++;
+        } else {
+          profitableCount++;
+        }
+      });
+
+      const totalOrders = profitableCount + lossCount;
+      let profitPct = 0;
+      let lossPct = 0;
+      if (totalOrders > 0) {
+        profitPct = (profitableCount / totalOrders) * 100;
+        lossPct = (lossCount / totalOrders) * 100;
+      }
+
+      document.getElementById("modal-product-name").innerHTML = `<i class="fa-solid fa-chart-pie me-2"></i>${productName}`;
+      document.getElementById("modal-product-category").textContent = prodObj ? prodObj.category : "N/A";
+      document.getElementById("modal-product-price").textContent = prodObj ? formatRupee(prodObj.price, 0) : "₹0.00";
+      document.getElementById("modal-product-qty").textContent = totalUnits;
+      document.getElementById("modal-product-sales").textContent = formatRupee(grossSales);
+      document.getElementById("modal-product-profit").textContent = formatRupee(netProfit);
+      document.getElementById("modal-product-loss").textContent = formatRupee(totalLoss);
+      document.getElementById("modal-profitable-count").textContent = `${profitableCount} (${profitPct.toFixed(1)}%)`;
+      document.getElementById("modal-loss-count").textContent = `${lossCount} (${lossPct.toFixed(1)}%)`;
+
+      document.getElementById("modal-profit-progress").style.width = `${profitPct}%`;
+      document.getElementById("modal-loss-progress").style.width = `${lossPct}%`;
+
+      document.getElementById("product-modal").classList.add("active");
+    }
+
+    function closeProductModal() {
+      document.getElementById("product-modal").classList.remove("active");
+    }
+
+    // Close modal on escape key or clicking backdrop
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeProductModal();
+      }
+    });
+
+    document.getElementById("product-modal").addEventListener("click", (e) => {
+      if (e.target.id === "product-modal") {
+        closeProductModal();
+      }
+    });
+  </script>
+  <a id="btn_download_report" class="shiny-download-link" style="display: none;" href=""></a>
+</body>
+</html>
