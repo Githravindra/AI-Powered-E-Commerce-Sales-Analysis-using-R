@@ -1,0 +1,8 @@
+"Order_ID","Order_Date","Customer_ID","Customer_Name","Product","Category","Quantity","Price","Sales","Profit","City","State","Region","Year","Month","Quarter","Month_Name","Profit_Margin","Is_Outlier"
+"EC-1758",2026-06-13,"CUST-107","James Garcia","Running Shoes","Clothing",3,9900,29700,9780.42,"Dallas","Texas","West",2026,6,"Q2","Jun",0.3293,FALSE
+"EC-1587",2026-06-08,"CUST-128","Sofia Allen","iPad Air","Electronics",3,49000,147000,49732.97,"Seattle","Washington","East",2026,6,"Q2","Jun",0.3383,TRUE
+"EC-1300",2026-06-13,"CUST-148","Nora Parker","LED Desk Lamp","Furniture",1,4000,4000,665.08,"Chicago","Illinois","South",2026,6,"Q2","Jun",0.1663,FALSE
+"EC-1976",2026-06-08,"CUST-131","Jack King","LED Desk Lamp","Furniture",3,4000,12000,2138.48,"San Francisco","California","Central",2026,6,"Q2","Jun",0.1782,FALSE
+"EC-1191",2026-06-08,"CUST-121","Logan Martin","Dry Erase Whiteboard","Office Supplies",1,3700,3700,2055.61,"Seattle","Washington","East",2026,6,"Q2","Jun",0.5556,FALSE
+"EC-1128",2026-06-01,"CUST-120","Evelyn Harris","Heavy Duty Stapler","Office Supplies",2,1800,3600,2220.39,"San Francisco","California","East",2026,6,"Q2","Jun",0.6168,FALSE
+"EC-1255",2026-06-04,"CUST-120","Evelyn Harris","Premium Notebook Pack","Office Supplies",1,1200,1200,456.75,"San Francisco","California","Central",2026,6,"Q2","Jun",0.3806,FALSE
